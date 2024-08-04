@@ -1,9 +1,12 @@
 from XYSt_util.names import Names,Space
 class Grid:
-    def __init__(self,x=15,y=15):
+    def __init__(self,x=15,y=15,win_white=5,win_black=5):
         self._x=x
         self._y=y
         self._grid = [[0 for col in range(x)] for row in range(y)]
+        
+        self.win_white=win_white
+        self.win_black=win_black
 
     def print_grid(self):
         for i in self._grid:
@@ -31,3 +34,59 @@ class Grid:
         else:
             raise RuntimeWarning('(%s,%s) is already occupied!'%(str(x),str(y)))
         return self
+
+    def _check(self,x,y,value,dir_x,dir_y,length=1):
+        '''Recursive check from a certain game position'''
+        #dir values are for checking which way to look towards next time
+        #add out of bounds checks here
+        if x>self._x or y>self._y or x<1 or y<1:
+            #out of bounds
+            return False
+        elif self._grid[x-1][y-1]!=value:
+            return False #not a victory sequence
+        elif length>=self.win_black and value==Names.BLACK.value:
+            return True #black won
+        elif length>=self.win_white and value==Names.WHITE.value:
+            return True #white won
+        else:
+            return _check(self,x+dir_x,y+dir_y,value,dir_x,dir_y,length+1)
+
+
+
+    def evaluate(self):
+        '''
+        Check the condition of the field to see if anybody won
+        '''
+        white_wins=False
+        black_wins=False
+        for i in range(self._x):
+            for j in range(self._y):
+                if self._grid[j][i]!=0:
+                    #check 8 possible directions for a possible win
+                    # x increase means moving to the right
+                    # y increase means moving down
+                    x=i+1
+                    y=j+1
+                    value=self._grid[j][i]
+                    # x+1 y = right
+                    r=_check(self,x+1,y,value,1,0)
+                    # x+1 y+1 = down right
+                    dr=_check(self,x+1,y+1,value,1,1)
+                    # x y+1 = down
+                    d=_check(self,x,y+1,value,0,1)
+                    # x-1 y+1 = down left
+                    dl=_check(self,x-1,y+1,value,-1,1)
+                    # x-1 y = left
+                    l=_check(self,x-1,y,value,-1,0)
+                    # x-1 y-1 = up left
+                    ul=_check(self,x-1,y-1,value,-1,-1)
+                    # x y-1 = up
+                    u=_check(self,x,y-1,value,0,-1)
+                    # x+1 y-1 = up right
+                    ur=_check(self,x+1,y-1,value,1,-1)
+                    #if any of those are victorious, return true
+                    condition=(r or dr or d or dl or l or ul or u or ur)
+                    if condition:
+                        return value
+        #nobody won
+        return False
