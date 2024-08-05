@@ -39,19 +39,19 @@ class Grid:
         '''Recursive check from a certain game position'''
         #dir values are for checking which way to look towards next time
         #add out of bounds checks here
+        print(x,y,self._grid[y-1][x-1])
+        print(length>=self.win_white,value,Space.WHITE.value)
         if x>self._x or y>self._y or x<1 or y<1:
             #out of bounds
             return False
-        elif self._grid[x-1][y-1]!=value:
-            return False #not a victory sequence
-        elif length>=self.win_black and value==Names.BLACK.value:
+        elif length>=self.win_black and value==Space.BLACK.value:
             return True #black won
-        elif length>=self.win_white and value==Names.WHITE.value:
+        elif length>=self.win_white and value==Space.WHITE.value:
             return True #white won
+        elif self._grid[y-1][x-1]!=value:
+            return False #not a victory sequence
         else:
-            return _check(self,x+dir_x,y+dir_y,value,dir_x,dir_y,length+1)
-
-
+            return self._check(x+dir_x,y+dir_y,value,dir_x,dir_y,length+1)
 
     def evaluate(self):
         '''
@@ -69,24 +69,30 @@ class Grid:
                     y=j+1
                     value=self._grid[j][i]
                     # x+1 y = right
-                    r=_check(self,x+1,y,value,1,0)
+                    r=self._check(x+1,y,value,1,0)
                     # x+1 y+1 = down right
-                    dr=_check(self,x+1,y+1,value,1,1)
+                    dr=self._check(x+1,y+1,value,1,1)
                     # x y+1 = down
-                    d=_check(self,x,y+1,value,0,1)
+                    d=self._check(x,y+1,value,0,1)
                     # x-1 y+1 = down left
-                    dl=_check(self,x-1,y+1,value,-1,1)
+                    dl=self._check(x-1,y+1,value,-1,1)
                     # x-1 y = left
-                    l=_check(self,x-1,y,value,-1,0)
+                    l=self._check(x-1,y,value,-1,0)
                     # x-1 y-1 = up left
-                    ul=_check(self,x-1,y-1,value,-1,-1)
+                    ul=self._check(x-1,y-1,value,-1,-1)
                     # x y-1 = up
-                    u=_check(self,x,y-1,value,0,-1)
+                    u=self._check(x,y-1,value,0,-1)
                     # x+1 y-1 = up right
-                    ur=_check(self,x+1,y-1,value,1,-1)
+                    ur=self._check(x+1,y-1,value,1,-1)
                     #if any of those are victorious, return true
                     condition=(r or dr or d or dl or l or ul or u or ur)
                     if condition:
-                        return value
+                        if value == Space.WHITE.value:
+                            print('White wins!')
+                            return Space.WHITE.name
+                        elif value == Space.BLACK.value:
+                            print('Black wins!')
+                            return Space.BLACK.name
         #nobody won
+        print('nobody won')
         return False
