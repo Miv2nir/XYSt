@@ -39,8 +39,8 @@ class Grid:
         '''Recursive check from a certain game position'''
         #dir values are for checking which way to look towards next time
         #add out of bounds checks here
-        print(x,y,self._grid[y-1][x-1])
-        print(length>=self.win_white,value,Space.WHITE.value)
+        #print(x,y,self._grid[y-1][x-1])
+        #print(length>=self.win_white,value,Space.WHITE.value)
         if x>self._x or y>self._y or x<1 or y<1:
             #out of bounds
             return False
@@ -96,3 +96,60 @@ class Grid:
         #nobody won
         print('nobody won')
         return False
+
+    def _check_heuristics(self,x,y,value,dir_x,dir_y,length=1):
+        '''Recursive check from a certain game position, returns lengths'''
+        #dir values are for checking which way to look towards next time
+        #add out of bounds checks here
+        #print(x,y,self._grid[y-1][x-1])
+        #print(length>=self.win_white,value,Space.WHITE.value)
+        if x>self._x or y>self._y or x<1 or y<1:
+            #out of bounds
+            return length
+        elif length>=self.win_black and value==Space.BLACK.value:
+            return self.win_black #black won
+        elif length>=self.win_white and value==Space.WHITE.value:
+            return self.win_white #white won
+        elif self._grid[y-1][x-1]!=value:
+            return length #not a victory sequence
+        else:
+            return self._check(x+dir_x,y+dir_y,value,dir_x,dir_y,length+1)
+
+    def evaluate_heuristics(self):
+        '''
+        Calculate the level of benefit of a particular position for blacks (heuristics stuff)
+        '''
+        white_score=0
+        black_score=0
+        for i in range(self._x):
+            for j in range(self._y):
+                if self._grid[j][i]!=0:
+                    x=i+1
+                    y=j+1
+                    value=self._grid[j][i]
+                    # x+1 y = right
+                    r=self._check_heuristics(x+1,y,value,1,0)
+                    # x+1 y+1 = down right
+                    dr=self._check_heuristics(x+1,y+1,value,1,1)
+                    # x y+1 = down
+                    d=self._check_heuristics(x,y+1,value,0,1)
+                    # x-1 y+1 = down left
+                    dl=self._check_heuristics(x-1,y+1,value,-1,1)
+                    # x-1 y = left
+                    l=self._check_heuristics(x-1,y,value,-1,0)
+                    # x-1 y-1 = up left
+                    ul=self._check_heuristics(x-1,y-1,value,-1,-1)
+                    # x y-1 = up
+                    u=self._check_heuristics(x,y-1,value,0,-1)
+                    # x+1 y-1 = up right
+                    ur=self._check_heuristics(x+1,y-1,value,1,-1)
+                    #score time
+                    if value>0:
+                        #black
+                        black_score=max(black_score,r,dr,d,dl,l,ul,u,ur) #>0
+                    elif value<0:
+                        #white
+                        white_score=min(white_score,r,dr,d,dl,l,ul,u,ur) #<0
+        #got our scores and everything
+
+        return (black_score+white_score)/self.win_black

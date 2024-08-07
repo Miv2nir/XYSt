@@ -21,7 +21,7 @@ def terminal_calc(game_obj:game.Grid):
         return 0
 
 def cut_off_evaluation(game_obj:game.Grid):
-    raise NotImplemented
+    return game_obj.evaluate_heuristics()
 
 def minimax(game_obj:game.Grid,x,y,alpha=-inf,beta=inf,depth=inf,black=True):
     raise NotImplemented
