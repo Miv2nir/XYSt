@@ -35,6 +35,10 @@ class Grid:
             raise RuntimeWarning('(%s,%s) is already occupied!'%(str(x),str(y)))
         return self
 
+    def get_value(self,x,y):
+        '''Returns a value on an (x,y) coordinate'''
+        return self._grid[y-1][x-1]
+        
     def _check(self,x,y,value,dir_x,dir_y,length=1):
         '''Recursive check from a certain game position'''
         #dir values are for checking which way to look towards next time
