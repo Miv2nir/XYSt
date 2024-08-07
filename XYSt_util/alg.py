@@ -21,6 +21,8 @@ def terminal_calc(game_obj:game.Grid):
         return 0
 
 def cut_off_evaluation(game_obj:game.Grid):
+    global heuristics_called
+    heuristics_called=True
     return game_obj.evaluate_heuristics()
 
 def minimax(game_obj:game.Grid,x,y,alpha=-inf,beta=inf,depth=inf,black=True):
@@ -42,7 +44,7 @@ def minimax(game_obj:game.Grid,x,y,alpha=-inf,beta=inf,depth=inf,black=True):
                     continue
                 #copy the game field
                 future_game_obj=copy.deepcopy(game_obj)
-                future_game_obj.decrease(i+1,j+1)
+                future_game_obj.put(i+1,j+1,Space.BLACK)
                 #recursion time
                 eval=minimax(future_game_obj,i+1,j+1,alpha,beta,depth-1,False)
                 maxEval=max(eval,maxEval)
@@ -62,7 +64,7 @@ def minimax(game_obj:game.Grid,x,y,alpha=-inf,beta=inf,depth=inf,black=True):
                     continue
                 #copy the game field
                 future_game_obj=copy.deepcopy(game_obj)
-                future_game_obj.decrease(i+1,j+1)
+                future_game_obj.put(i+1,j+1,Space.WHITE)
                 #more recursion!!!!!!
                 eval=minimax(future_game_obj,i+1,j+1,alpha,beta,depth-1,True)
                 minEval=min(eval,minEval)
@@ -77,10 +79,59 @@ def minimax(game_obj:game.Grid,x,y,alpha=-inf,beta=inf,depth=inf,black=True):
 
 
 def alg_minimax(game_obj:game.Grid,depth=inf):
-    raise NotImplemented
+    '''minimax function wrapper for further integration into the code + iterative deepening work'''
+    d=dict()
+    #iterate through the entire game field, calculate minimax values for each position, return the highest one possible
+    for i in range(game_obj._x):
+        for j in range(game_obj._y):
+            if future_game_obj.get_value(i+1,j+1)!=0:
+                continue
+            future_game_obj=copy.deepcopy(game_obj)
+            future_game_obj.put(i+1,j+1,Space.BLACK)
+            d[(i+1,j+1)]=minimax(future_game_obj,i+1,j+1,depth=depth,black=False)
+    #pick the highest value coordinate
+    max_val=-inf
+    final_x=0
+    final_y=0
+    for i in d.keys():
+        if d[i]>max_val:
+            max_val=d[i]
+            final_x,final_y=i
+    return (final_x,final_y)
 
 def alg_minimax_process(game_obj:game.Grid,best_coords:list):
-    raise NotImplemented
+    '''An iterative deepening thread that should be able to terminate whenever needed'''
+    depth=0
+    while True:
+        copied_game_obj=copy.deepcopy(game_obj)
+        global heuristics_called
+        heuristics_called=False
+        best_x,best_y=alg_minimax(copied_game_obj,depth)
+        best_coords[0]=best_x
+        best_coords[1]=best_y
+        depth+=1
+        if not heuristics_called:
+            return None
 
 def alg_minimax_timed(game_obj:game.Grid,decision_max_seconds):
-    raise NotImplemented
+    '''Wrapper of a wrapper of a minimax algorithm for the purposes of iterative deepening'''
+    seconds=decision_max_seconds
+
+    t_end=time.time()+seconds
+    depth=0
+    best_x=0
+    best_y=0
+    global heuristics_called
+    heuristics_called=False
+    best_x,best_y=alg_minimax(game_obj,depth)
+    depth+=1
+    manager=multiprocessing.Manager()
+    best_coords=manager.list([best_x,best_y])
+    t=multiprocessing.Process(target=alg_minimax_process,args=(game_obj,best_coords))
+    t.start()
+    t.join(seconds)
+    if t.is_alive():
+        t.terminate()
+    best_x=best_coords[0]
+    best_y=best_coords[1]
+    return best_x,best_y
