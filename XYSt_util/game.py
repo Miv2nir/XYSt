@@ -64,7 +64,7 @@ class Grid:
         else:
             return self._check(x+dir_x,y+dir_y,value,dir_x,dir_y,length+1)
 
-    def evaluate(self):
+    def evaluate(self,verbal=False):
         '''
         Check the condition of the field to see if anybody won
         '''
@@ -99,13 +99,16 @@ class Grid:
                     condition=(r or dr or d or dl or l or ul or u or ur)
                     if condition:
                         if value == Space.WHITE.value:
-                            print('White wins!')
+                            if verbal:
+                                print('White wins!')
                             return Space.WHITE.name
                         elif value == Space.BLACK.value:
-                            print('Black wins!')
+                            if verbal:
+                                print('Black wins!')
                             return Space.BLACK.name
         #nobody won
-        print('nobody won')
+        if verbal:
+            print('nobody won')
         return False
 
     def _check_heuristics(self,x,y,value,dir_x,dir_y,length=1):

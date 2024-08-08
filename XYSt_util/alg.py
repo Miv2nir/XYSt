@@ -84,7 +84,7 @@ def alg_minimax(game_obj:game.Grid,depth=inf):
     #iterate through the entire game field, calculate minimax values for each position, return the highest one possible
     for i in range(game_obj._x):
         for j in range(game_obj._y):
-            if future_game_obj.get_value(i+1,j+1)!=0:
+            if game_obj.get_value(i+1,j+1)!=0:
                 continue
             future_game_obj=copy.deepcopy(game_obj)
             future_game_obj.put(i+1,j+1,Space.BLACK)
