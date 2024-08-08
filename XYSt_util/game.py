@@ -27,6 +27,13 @@ class Grid:
         '''Returns the grid'''
         return self._grid
 
+    def set_grid(self,m):
+        '''
+        m is assumed to be a list of lists
+        '''
+        self._grid=m
+        self._x=len(m[0])
+        self._y=len(m)
     def put(self,x,y,piece:Space):
         '''Puts a piece on the board that is of the respective color'''
         if self._grid[y-1][x-1] == Space.EMPTY.value: 

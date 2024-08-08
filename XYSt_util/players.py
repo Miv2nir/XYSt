@@ -1,4 +1,4 @@
-from XYSt_util import game
+from XYSt_util import game,alg
 from XYSt_util.names import Names,Space
 
 class Player:

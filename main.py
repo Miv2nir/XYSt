@@ -45,7 +45,7 @@ def runtime(white,black,presets,decision_max_seconds):
     while not game_over:
         white_x,white_y=map(int,input('Select a space to place a peg in: ').split())
         #out of bounds check
-        if (bob_x>g._x) or (bob_y>g._y) or (0>bob_x) or (0>bob_y):
+        if (white_x>g._x) or (white_y>g._y) or (0>white_x) or (0>white_y):
             print(g._x,g._y)
             print('Selection is Out of Bounds!')
             continue
