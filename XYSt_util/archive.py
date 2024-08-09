@@ -21,3 +21,30 @@ def test2():
     g.put(2,1,names.Space.WHITE)
     g.print_grid()
     g.evaluate(verbal=True)
+def test3():
+    g=game.Grid()
+    g.set_grid([[0 for col in range(3)] for row in range(3)])
+    g.win_black=3
+    g.win_white=3
+    g.put(2,1,names.Space.WHITE)
+    g.put(1,1,names.Space.BLACK)
+    g.put(2,2,names.Space.WHITE)
+    g.put(1,2,names.Space.BLACK)
+    g.put(1,3,names.Space.WHITE)
+    
+    #g.put(3,1,names.Space.BLACK)
+    g.put(2,3,names.Space.BLACK)
+    g.print_grid()
+    print(g.evaluate_heuristics())
+def test4():
+    g=game.Grid()
+    g.win_black=5
+    g.win_white=5
+    g.put(2,2,names.Space.WHITE)
+    g.put(3,2,names.Space.BLACK)
+    g.put(4,4,names.Space.WHITE)
+    #g.put(2,2,names.Space.BLACK)
+    #g.put(2,2,names.Space.BLACK)
+    #g.put(5,7,names.Space.WHITE)
+    g.print_grid()
+    print(g.evaluate_heuristics())

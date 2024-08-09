@@ -109,23 +109,26 @@ class Grid:
             print('nobody won')
         return False
 
-    def _check_heuristics(self,x,y,value,dir_x,dir_y,length=1):
-        '''Recursive check from a certain game position, returns lengths'''
+    def _check_heuristics(self,x,y,value,dir_x,dir_y,tracker_length=1,length=1):
+        '''Recursive check from a certain game position, returns tracker_lengths'''
         #dir values are for checking which way to look towards next time
         #add out of bounds checks here
         #print(x,y,self._grid[y-1][x-1])
-        #print(length>=self.win_white,value,Space.WHITE.value)
-        if x>self._x or y>self._y or x<1 or y<1:
-            #out of bounds
+        #print(tracker_length>=self.win_white,value,Space.WHITE.value)
+        if tracker_length>=self.win_black:
             return length
-        elif length>=self.win_black and value==Space.BLACK.value:
-            return self.win_black #black won
-        elif length>=self.win_white and value==Space.WHITE.value:
-            return self.win_white #white won
+        elif tracker_length>=self.win_white:
+            return length
+        elif x>self._x or y>self._y or x<1 or y<1:
+            #out of bounds
+            return 0
+        elif self._grid[y-1][x-1]==0:
+            return self._check_heuristics(x+dir_x,y+dir_y,value,dir_x,dir_y,tracker_length+1,length) #not a victory sequence but possible to win
         elif self._grid[y-1][x-1]!=value:
-            return length #not a victory sequence
-        else:
-            return self._check(x+dir_x,y+dir_y,value,dir_x,dir_y,length+1)
+            #blocked direction
+            return 0
+        else: #value on a spot == value parsed to function
+                return self._check_heuristics(x+dir_x,y+dir_y,value,dir_x,dir_y,tracker_length+1,length+1)
 
     def evaluate_heuristics(self):
         '''
@@ -135,9 +138,10 @@ class Grid:
         black_score=0
         for i in range(self._x):
             for j in range(self._y):
+                x=i+1
+                y=j+1
+                peg=self._grid[j][i]
                 if self._grid[j][i]!=0:
-                    x=i+1
-                    y=j+1
                     value=self._grid[j][i]
                     # x+1 y = right
                     r=self._check_heuristics(x+1,y,value,1,0)
@@ -161,7 +165,7 @@ class Grid:
                         black_score=max(black_score,r,dr,d,dl,l,ul,u,ur) #>0
                     elif value<0:
                         #white
-                        white_score=min(white_score,r,dr,d,dl,l,ul,u,ur) #<0
+                        white_score=min(white_score,-r,-dr,-d,-dl,-l,-ul,-u,-ur) #<0
         #got our scores and everything
 
         return (black_score+white_score)/self.win_black

@@ -63,8 +63,8 @@ def runtime(white,black,presets,decision_max_seconds,win_black,win_white):
 
 def main():
     decision_max_seconds=10
-    win_black=2
-    win_white=2
+    win_black=3
+    win_white=3
     presets={
         'default':[[0 for col in range(15)] for row in range(15)],
         'small':[[0 for col in range(5)] for row in range(5)],
@@ -75,8 +75,8 @@ def main():
     white=players.Player(Names.WHITE)
     black=players.Player(Names.BLACK)
     
-    runtime(white,black,presets,decision_max_seconds,win_black,win_white)
-    #archive.test1()
+    #runtime(white,black,presets,decision_max_seconds,win_black,win_white)
+    archive.test4()
 
 if __name__ == '__main__':
     main()
