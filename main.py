@@ -58,13 +58,16 @@ def runtime(white,black,presets,decision_max_seconds,win_black,win_white):
         #continuing on
         white.move(g,white_x,white_y,verbal=True)
         g.print_grid()
+        white_win=g.evaluate(verbal=True)
+        if white_win==Space.WHITE.name:
+            exit(0) #the game is over
         game_over=black.analyze(g,decision_max_seconds,move=True,verbal=True)
 
 
 def main():
     decision_max_seconds=10
-    win_black=3
-    win_white=3
+    win_black=5
+    win_white=5
     presets={
         'default':[[0 for col in range(15)] for row in range(15)],
         'small':[[0 for col in range(5)] for row in range(5)],
@@ -75,8 +78,8 @@ def main():
     white=players.Player(Names.WHITE)
     black=players.Player(Names.BLACK)
     
-    #runtime(white,black,presets,decision_max_seconds,win_black,win_white)
-    archive.test4()
+    runtime(white,black,presets,decision_max_seconds,win_black,win_white)
+    #archive.test3()
 
 if __name__ == '__main__':
     main()

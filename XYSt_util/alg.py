@@ -76,6 +76,10 @@ def minimax(game_obj:game.Grid,x,y,alpha=-inf,beta=inf,depth=inf,black=True):
                 break
         return minEval
 
+def availability_check(game_obj:game.Grid,x,y):
+    if game_obj.get_piece(x,y)==Space.EMPTY and x>0 and x<=game_obj._x and y>0 and y<=game_obj._y:
+        return True
+    return False
 
 def alg_minimax(game_obj:game.Grid,depth=inf):
     '''minimax function wrapper for further integration into the code + iterative deepening work'''
@@ -89,6 +93,53 @@ def alg_minimax(game_obj:game.Grid,depth=inf):
             future_game_obj.put(i+1,j+1,Space.BLACK)
             d[(i+1,j+1)]=minimax(future_game_obj,i+1,j+1,depth=depth,black=False)
             print(d)
+    
+    if max(d.values())==min(d.values()):
+        substitute=(0,0)
+        #the algorithm in this case doesnt care as to where to set a peg so let's set it near a player's one
+        for i in range(game_obj._x):
+            break_flag=False
+            for j in range(game_obj._y):
+                x=i+1
+                y=j+1
+                if game_obj.get_piece(x,y)==Space.WHITE: #found it
+                    if availability_check(game_obj,x-1,y): #left
+                        substitute=(x-1,y)
+                        break_flag=True
+                        break
+                    elif availability_check(game_obj,x,y-1): #up
+                        substitute=(x,y-1)
+                        break_flag=True
+                        break
+                    elif availability_check(game_obj,x+1,y): #right
+                        substitute=(x+1,y)
+                        break_flag=True
+                        break
+                    elif availability_check(game_obj,x,y+1): #down
+                        substitute=(x,y+1)
+                        break_flag=True
+                        break
+                    elif availability_check(game_obj,x-1,y-1): #left up
+                        substitute=(x-1,y-1)
+                        break_flag=True
+                        break
+                    elif availability_check(game_obj,x-1,y+1): #left down
+                        substitute=(x-1,y+1)
+                        break_flag=True
+                        break
+                    elif availability_check(game_obj,x+1,y-1): #right up
+                        substitute=(x+1,y-1)
+                        break_flag=True
+                        break
+                    elif availability_check(game_obj,x+1,y+1): #right down
+                        substitute=(x+1,y+1)
+                        break_flag=True
+                        break
+            if break_flag:
+                break
+        if substitute!=(0,0):
+            return substitute
+                        
     #pick the highest value coordinate
     max_val=-inf
     final_x=0
@@ -97,6 +148,7 @@ def alg_minimax(game_obj:game.Grid,depth=inf):
         if d[i]>max_val:
             max_val=d[i]
             final_x,final_y=i
+    
     return (final_x,final_y)
 
 def alg_minimax_process(game_obj:game.Grid,best_coords:list):

@@ -134,7 +134,7 @@ class Grid:
         '''
         Calculate the level of benefit of a particular position for blacks (heuristics stuff)
         '''
-        white_score=0
+        white_score=-1
         black_score=0
         for i in range(self._x):
             for j in range(self._y):
