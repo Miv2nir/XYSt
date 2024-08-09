@@ -52,13 +52,11 @@ class Grid:
         #add out of bounds checks here
         #print(x,y,self._grid[y-1][x-1])
         #print(length>=self.win_white,value,Space.WHITE.value)
-        if x>self._x or y>self._y or x<1 or y<1:
+        if length>=self.win_black or length>=self.win_white:
+            return True
+        elif x>self._x or y>self._y or x<1 or y<1:
             #out of bounds
             return False
-        elif length>=self.win_black and value==Space.BLACK.value:
-            return True #black won
-        elif length>=self.win_white and value==Space.WHITE.value:
-            return True #white won
         elif self._grid[y-1][x-1]!=value:
             return False #not a victory sequence
         else:

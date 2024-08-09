@@ -69,7 +69,6 @@ def minimax(game_obj:game.Grid,x,y,alpha=-inf,beta=inf,depth=inf,black=True):
                 eval=minimax(future_game_obj,i+1,j+1,alpha,beta,depth-1,True)
                 minEval=min(eval,minEval)
                 beta=min(beta,eval)
-                beta=min(beta,eval)
                 if beta<=alpha:
                     break_flag=True
                     break
@@ -89,6 +88,7 @@ def alg_minimax(game_obj:game.Grid,depth=inf):
             future_game_obj=copy.deepcopy(game_obj)
             future_game_obj.put(i+1,j+1,Space.BLACK)
             d[(i+1,j+1)]=minimax(future_game_obj,i+1,j+1,depth=depth,black=False)
+            print(d)
     #pick the highest value coordinate
     max_val=-inf
     final_x=0

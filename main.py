@@ -14,7 +14,7 @@ def option_picker_int(options:set):
             return option
         print('Incorrect option number specified.')
 
-def runtime(white,black,presets,decision_max_seconds):
+def runtime(white,black,presets,decision_max_seconds,win_black,win_white):
     '''runtime for the CLI play'''
     print('Select an option:')
     print('1. Load a field preset')
@@ -22,6 +22,8 @@ def runtime(white,black,presets,decision_max_seconds):
     option1=option_picker_int({1,2})
 
     g=game.Grid()
+    g.win_black=win_black
+    g.win_white=win_white
     global decision_max_time
     decision_max_time=decision_max_seconds
 
@@ -61,14 +63,20 @@ def runtime(white,black,presets,decision_max_seconds):
 
 def main():
     decision_max_seconds=10
+    win_black=2
+    win_white=2
     presets={
         'default':[[0 for col in range(15)] for row in range(15)],
+        'small':[[0 for col in range(5)] for row in range(5)],
+        'smallest':[[0 for col in range(3)] for row in range(3)],
+        'smallestest':[[0 for col in range(2)] for row in range(2)]
     }
     #init players
     white=players.Player(Names.WHITE)
     black=players.Player(Names.BLACK)
     
-    runtime(white,black,presets,decision_max_seconds)
+    runtime(white,black,presets,decision_max_seconds,win_black,win_white)
+    #archive.test1()
 
 if __name__ == '__main__':
     main()
