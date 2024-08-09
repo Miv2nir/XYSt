@@ -92,7 +92,7 @@ def alg_minimax(game_obj:game.Grid,depth=inf):
             future_game_obj=copy.deepcopy(game_obj)
             future_game_obj.put(i+1,j+1,Space.BLACK)
             d[(i+1,j+1)]=minimax(future_game_obj,i+1,j+1,depth=depth,black=False)
-            print(d)
+            #print(d)
     
     if max(d.values())==min(d.values()):
         substitute=(0,0)

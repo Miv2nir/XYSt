@@ -14,7 +14,7 @@ def option_picker_int(options:set):
             return option
         print('Incorrect option number specified.')
 
-def runtime(white,black,presets,decision_max_seconds,win_black,win_white):
+def runtime(white,black,presets,presets_win_lengths,decision_max_seconds,win_black,win_white):
     '''runtime for the CLI play'''
     print('Select an option:')
     print('1. Load a field preset')
@@ -35,11 +35,16 @@ def runtime(white,black,presets,decision_max_seconds,win_black,win_white):
             g_temp=game.Grid()
             g_temp.set_grid(presets[i])
             g_temp.print_grid()
-        g.set_grid(presets[option_picker_str(presets.keys())])
+        selection=option_picker_str(presets.keys())
+        g.set_grid(presets[selection])
+        g.win_black=presets_win_lengths[selection][0]
+        g.win_white=presets_win_lengths[selection][1]
+        print('Selected preset:',selection+',win lenghts for white & black:(%s,%s)'%(g.win_white,g.win_black))
     elif option1==2: #generating a map
         x,y=map(int,input("Enter desired dimensions of a grid: ").split())
         print('Generating a grid of %s by %s...'%(x,y))
         g=game.Grid(x,y)
+        g.win_white,g.win_black=map(int,input("Enter win condition lenghts for white & black respectively: ").split())
     g.print_grid()
 
     #gaming time
@@ -71,14 +76,20 @@ def main():
     presets={
         'default':[[0 for col in range(15)] for row in range(15)],
         'small':[[0 for col in range(5)] for row in range(5)],
-        'smallest':[[0 for col in range(3)] for row in range(3)],
-        'smallestest':[[0 for col in range(2)] for row in range(2)]
+        'tictactoe':[[0 for col in range(3)] for row in range(3)],
+        'smallest':[[0 for col in range(2)] for row in range(2)]
+    }
+    presets_win_lengths={
+        'default':(5,5),
+        'small':(4,4),
+        'tictactoe':(3,3),
+        'smallest':(2,2)
     }
     #init players
     white=players.Player(Names.WHITE)
     black=players.Player(Names.BLACK)
     
-    runtime(white,black,presets,decision_max_seconds,win_black,win_white)
+    runtime(white,black,presets,presets_win_lengths,decision_max_seconds,win_black,win_white)
     #archive.test3()
 
 if __name__ == '__main__':
