@@ -187,3 +187,12 @@ def alg_minimax_timed(game_obj:game.Grid,decision_max_seconds):
     best_x=best_coords[0]
     best_y=best_coords[1]
     return best_x,best_y
+
+def improved_evaluation(game_obj:game.Grid,x,y):
+    '''Helper function for alg_improved which does points calculation for given coordinates'''
+
+
+def alg_improved(game_obj:game.Grid):
+    '''New version of a linear evaluation function algorithm previously used as part of a minimax process'''
+    #need logging
+    m=random.randint(9,12)/10 #proportion between attack & defense, presumably
