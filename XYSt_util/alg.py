@@ -194,5 +194,11 @@ def improved_evaluation(game_obj:game.Grid,x,y):
 
 def alg_improved(game_obj:game.Grid):
     '''New version of a linear evaluation function algorithm previously used as part of a minimax process'''
-    #need logging
-    m=random.randint(9,12)/10 #proportion between attack & defense, presumably
+    #rough algo description:
+    #For every point:
+    #How many ways there are to complete a line with i moves (i=1,2,3,...,X)
+    #How did those coefficients rise after white's move in a mentioned point
+    #Recieved numbers a_i are multiplied by 10^(-i) and then adding them up
+    #Evaluate space=empty,white,black
+    #Compare and contrast
+    
