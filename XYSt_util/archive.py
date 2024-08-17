@@ -52,13 +52,14 @@ def test4():
 def test5():
     g=game.Grid()
     #g.put(5,5,names.Space.BLACK)
-    g.put(6,6,names.Space.BLACK)
-    g.put(7,7,names.Space.BLACK)
-    g.put(8,8,names.Space.BLACK)
+    #g.put(6,6,names.Space.BLACK)
+    #g.put(7,7,names.Space.BLACK)
+    g.put(8,8,names.Space.WHITE)
+    g.put(7,6,names.Space.BLACK)
     g.print_grid()
     print()
     g_bruh=game.Grid()
-    g_bruh.set_grid(alg.alg_improved(g))
+    g_bruh.set_grid(alg.alg_improved_comparison(g))
     g_bruh.print_grid()
     print(g_bruh.get_value(4,4))
 

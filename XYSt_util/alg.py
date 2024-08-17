@@ -254,12 +254,12 @@ def improved_eval(game_obj:game.Grid,win_length:int,value=Space.BLACK.value):
             #pick a point with the largest difference
     return eval_grid
 
-def alg_improved(game_obj:game.Grid):
+def alg_improved(game_obj:game.Grid,value):
     '''New version of a linear evaluation function algorithm previously used as part of a minimax process'''
     k=10
     score_matrix=improved_eval(game_obj,1)
     for a in range(2,game_obj.win_black+1):
-        intermediate_score_matrix=improved_eval(game_obj,a)
+        intermediate_score_matrix=improved_eval(game_obj,a,value)
         for i in range(game_obj._x):
             for j in range(game_obj._y):
                 intermediate_score_matrix[j][i]*=(k**(game_obj.win_black-a))
@@ -267,6 +267,15 @@ def alg_improved(game_obj:game.Grid):
     #calc the highest diff
     return score_matrix
 
+def alg_improved_comparison(game_obj:game.Grid,defense_coefficient=1):
+    '''Wrapper for alg_improved that runs it for blacks and whites and then compares both'''
+    scores_black=alg_improved(game_obj,value=Space.BLACK.value)
+    scores_white=alg_improved(game_obj,value=Space.WHITE.value)
+    scores_final=[[0 for col in range(game_obj._x)] for row in range(game_obj._y)]
+    for i in range(game_obj._x):
+        for j in range(game_obj._y):
+            scores_final[j][i]=defense_coefficient*scores_black[j][i]-scores_white[j][i]
+    return scores_final
 
 
     
