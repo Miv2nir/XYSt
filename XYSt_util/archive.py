@@ -58,7 +58,7 @@ def test5():
     g.print_grid()
     print()
     g_bruh=game.Grid()
-    g_bruh.set_grid(alg.improved_eval(g,4))
+    g_bruh.set_grid(alg.improved_eval(g,5))
     g_bruh.print_grid()
 
 def test5_1():

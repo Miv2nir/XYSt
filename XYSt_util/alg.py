@@ -193,6 +193,8 @@ def check_completion(game_obj:game.Grid,x,y,value,dir_x,dir_y,target_moves):
     Checks whether the line can be completed in a given direction (returns 0 or 1 integer)'''
     #x,y - starter coordinates
     #check if a spot is already occupied or not
+    if game_obj.is_out_of_bounds(x,y):
+        return 0
     if game_obj.get_piece(x,y).value!=0: #double check
         return 0
     length=1
@@ -200,6 +202,8 @@ def check_completion(game_obj:game.Grid,x,y,value,dir_x,dir_y,target_moves):
     while length<game_obj.win_white:
         x+=dir_x
         y+=dir_y
+        if game_obj.is_out_of_bounds(x,y):
+            return 0
         if game_obj.get_piece(x,y).value!=value and game_obj.get_piece(x,y)!=0:
             return 0
         length+=1
@@ -223,23 +227,23 @@ def improved_eval(game_obj:game.Grid,win_length:int):
                 #calculate how many ways are there to reach a victory in x moves
                 #similar to game_obj.evaluate_heuristics():
                 # x+1 y = right
-                r=game_obj._check_heuristics(x+1,y,value=Space.WHITE.value,dir_x=1,dir_y=0,tracker_length=calc_length,length=calc_length)
+                r=check_completion(game_obj,x+1,y,value=Space.BLACK.value,dir_x=1,dir_y=0,target_moves=win_length)
                 # x+1 y+1 = down right
-                dr=game_obj._check_heuristics(x+1,y+1,value=Space.WHITE.value,dir_x=1,dir_y=1,tracker_length=calc_length,length=calc_length)
+                dr=check_completion(game_obj,x+1,y+1,value=Space.BLACK.value,dir_x=1,dir_y=1,target_moves=win_length)
                 # x y+1 = down
-                d=game_obj._check_heuristics(x,y+1,value=Space.WHITE.value,dir_x=0,dir_y=1,tracker_length=calc_length,length=calc_length)
+                d=check_completion(game_obj,x,y+1,value=Space.BLACK.value,dir_x=0,dir_y=1,target_moves=win_length)
                 # x-1 y+1 = down left
-                dl=game_obj._check_heuristics(x-1,y+1,value=Space.WHITE.value,dir_x=-1,dir_y=1,tracker_length=calc_length,length=calc_length)
+                dl=check_completion(game_obj,x-1,y+1,value=Space.BLACK.value,dir_x=-1,dir_y=1,target_moves=win_length)
                 # x-1 y = left
-                l=game_obj._check_heuristics(x-1,y,value=Space.WHITE.value,dir_x=-1,dir_y=0,tracker_length=calc_length,length=calc_length)
+                l=check_completion(game_obj,x-1,y,value=Space.BLACK.value,dir_x=-1,dir_y=0,target_moves=win_length)
                 # x-1 y-1 = up left
-                ul=game_obj._check_heuristics(x-1,y-1,value=Space.WHITE.value,dir_x=-1,dir_y=-1,tracker_length=calc_length,length=calc_length)
+                ul=check_completion(game_obj,x-1,y-1,value=Space.BLACK.value,dir_x=-1,dir_y=-1,target_moves=win_length)
                 # x y-1 = up
-                u=game_obj._check_heuristics(x,y-1,value=Space.WHITE.value,dir_x=0,dir_y=-1,tracker_length=calc_length,length=calc_length)
+                u=check_completion(game_obj,x,y-1,value=Space.BLACK.value,dir_x=0,dir_y=-1,target_moves=win_length)
                 # x+1 y-1 = up right
-                ur=game_obj._check_heuristics(x+1,y-1,value=Space.WHITE.value,dir_x=1,dir_y=-1,tracker_length=calc_length,length=calc_length)
+                ur=check_completion(game_obj,x+1,y-1,value=Space.BLACK.value,dir_x=1,dir_y=-1,target_moves=win_length)
                 #score time
-                eval_grid[j][i]==sum([r,dr,d,dl,l,ul,u,ur])
+                eval_grid[j][i]=sum([r,dr,d,dl,l,ul,u,ur])
             #how did the coefficients change after one's move in P.
             #calculated coefficients to be added up, multiplied by k^(-1) where k=10
             #check in 3 stages, P has a white peg, a black peg or is empty

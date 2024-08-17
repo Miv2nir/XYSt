@@ -108,7 +108,10 @@ class Grid:
         if verbal:
             print('nobody won')
         return False
-
+    def is_out_of_bounds(self,x,y):
+        if x>self._x or y>self._y or x<1 or y<1:
+            return True
+        return False
     def _check_heuristics(self,x,y,value,dir_x,dir_y,tracker_length=1,length=1):
         '''Calculates distance to victory from a certain position in a defined direction'''
         #dir values are for checking which way to look towards next time
