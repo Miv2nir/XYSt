@@ -188,17 +188,74 @@ def alg_minimax_timed(game_obj:game.Grid,decision_max_seconds):
     best_y=best_coords[1]
     return best_x,best_y
 
-def improved_evaluation(game_obj:game.Grid,x,y):
-    '''Helper function for alg_improved which does points calculation for given coordinates'''
+def check_completion(game_obj:game.Grid,x,y,value,dir_x,dir_y,target_moves):
+    '''Rewrite of game_obj._check_heuristics() to work with improved_eval.
+    Checks whether the line can be completed in a given direction (returns 0 or 1 integer)'''
+    #x,y - starter coordinates
+    #check if a spot is already occupied or not
+    if game_obj.get_piece(x,y).value!=0: #double check
+        return 0
+    length=1
+    zero_count=1
+    while length<game_obj.win_white:
+        x+=dir_x
+        y+=dir_y
+        if game_obj.get_piece(x,y).value!=value and game_obj.get_piece(x,y)!=0:
+            return 0
+        length+=1
+    if zero_count>target_moves:
+        return 0
+    return 1
 
+def improved_eval(game_obj:game.Grid,win_length:int):
+    #rough algo description:
+    eval_grid=[[0 for col in range(game_obj._x)] for row in range(game_obj._y)]
+    #For every point:
+    calc_length=game_obj.win_white-win_length
+    for i in range(game_obj._x):
+        for j in range(game_obj._y):
+            #if point is zero:
+            if game_obj._grid[j][i]==0:
+                x=i+1
+                y=j+1
+                #calculate how many ways are there to reach a victory in x moves
+                #similar to game_obj.evaluate_heuristics():
+                # x+1 y = right
+                r=game_obj._check_heuristics(x+1,y,value=Space.WHITE.value,dir_x=1,dir_y=0,tracker_length=calc_length,length=calc_length)
+                # x+1 y+1 = down right
+                dr=game_obj._check_heuristics(x+1,y+1,value=Space.WHITE.value,dir_x=1,dir_y=1,tracker_length=calc_length,length=calc_length)
+                # x y+1 = down
+                d=game_obj._check_heuristics(x,y+1,value=Space.WHITE.value,dir_x=0,dir_y=1,tracker_length=calc_length,length=calc_length)
+                # x-1 y+1 = down left
+                dl=game_obj._check_heuristics(x-1,y+1,value=Space.WHITE.value,dir_x=-1,dir_y=1,tracker_length=calc_length,length=calc_length)
+                # x-1 y = left
+                l=game_obj._check_heuristics(x-1,y,value=Space.WHITE.value,dir_x=-1,dir_y=0,tracker_length=calc_length,length=calc_length)
+                # x-1 y-1 = up left
+                ul=game_obj._check_heuristics(x-1,y-1,value=Space.WHITE.value,dir_x=-1,dir_y=-1,tracker_length=calc_length,length=calc_length)
+                # x y-1 = up
+                u=game_obj._check_heuristics(x,y-1,value=Space.WHITE.value,dir_x=0,dir_y=-1,tracker_length=calc_length,length=calc_length)
+                # x+1 y-1 = up right
+                ur=game_obj._check_heuristics(x+1,y-1,value=Space.WHITE.value,dir_x=1,dir_y=-1,tracker_length=calc_length,length=calc_length)
+                #score time
+                eval_grid[j][i]==sum([r,dr,d,dl,l,ul,u,ur])
+            #how did the coefficients change after one's move in P.
+            #calculated coefficients to be added up, multiplied by k^(-1) where k=10
+            #check in 3 stages, P has a white peg, a black peg or is empty
+            #pick a point with the largest difference
+    return eval_grid
 
 def alg_improved(game_obj:game.Grid):
     '''New version of a linear evaluation function algorithm previously used as part of a minimax process'''
-    #rough algo description:
-    #For every point:
-    #How many ways there are to complete a line with i moves (i=1,2,3,...,X)
-    #How did those coefficients rise after white's move in a mentioned point
-    #Recieved numbers a_i are multiplied by 10^(-i) and then adding them up
-    #Evaluate space=empty,white,black
-    #Compare and contrast
+    k=10
+    score_matrix=improved_eval(game_obj,0)
+    for a in range(1,game_obj.win_white):
+        intermediate_score_matrix=improved_eval(game_obj,a)
+        for i in range(game_obj._x):
+            for j in range(game_obj._y):
+                intermediate_score_matrix[j][i]*=(k**(-a-1))
+                score_matrix[j][i]+=intermediate_score_matrix[j][i]
+    #calc the highest diff
+
+
+
     

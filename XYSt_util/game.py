@@ -110,7 +110,7 @@ class Grid:
         return False
 
     def _check_heuristics(self,x,y,value,dir_x,dir_y,tracker_length=1,length=1):
-        '''Recursive check from a certain game position, returns tracker_lengths'''
+        '''Calculates distance to victory from a certain position in a defined direction'''
         #dir values are for checking which way to look towards next time
         #add out of bounds checks here
         #print(x,y,self._grid[y-1][x-1])

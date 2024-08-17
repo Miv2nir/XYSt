@@ -1,4 +1,4 @@
-from XYSt_util import game,players,names
+from XYSt_util import game,players,names,alg
 from XYSt_util.names import Space
 def test1():
     g=game.Grid()
@@ -48,3 +48,25 @@ def test4():
     #g.put(5,7,names.Space.WHITE)
     g.print_grid()
     print(g.evaluate_heuristics())
+
+def test5():
+    g=game.Grid()
+    g.put(5,5,names.Space.BLACK)
+    g.put(6,6,names.Space.BLACK)
+    g.put(7,7,names.Space.BLACK)
+    g.put(8,8,names.Space.BLACK)
+    g.print_grid()
+    print()
+    g_bruh=game.Grid()
+    g_bruh.set_grid(alg.improved_eval(g,4))
+    g_bruh.print_grid()
+
+def test5_1():
+    g=game.Grid()
+    for i in range(2,6):
+        g.put(i,1,names.Space.BLACK)
+
+
+    g.print_grid()
+    print()
+    print(alg.check_completion(g,1,1,Space.BLACK.value,1,1,5))
