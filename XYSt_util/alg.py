@@ -213,6 +213,26 @@ def check_completion(game_obj:game.Grid,x,y,value,dir_x,dir_y,target_moves):
         return 0
     return 1
 
+def check_completion_all_directions(game_obj,x,y,value,win_length):
+    # x+1 y = right
+    r=check_completion(game_obj,x,y,value=value,dir_x=1,dir_y=0,target_moves=win_length)
+    # x+1 y+1 = down right
+    dr=check_completion(game_obj,x,y,value=value,dir_x=1,dir_y=1,target_moves=win_length)
+    # x y+1 = down
+    d=check_completion(game_obj,x,y,value=value,dir_x=0,dir_y=1,target_moves=win_length)
+    # x-1 y+1 = down left
+    dl=check_completion(game_obj,x,y,value=value,dir_x=-1,dir_y=1,target_moves=win_length)
+    # x-1 y = left
+    l=check_completion(game_obj,x,y,value=value,dir_x=-1,dir_y=0,target_moves=win_length)
+    # x-1 y-1 = up left
+    ul=check_completion(game_obj,x,y,value=value,dir_x=-1,dir_y=-1,target_moves=win_length)
+    # x y-1 = up
+    u=check_completion(game_obj,x,y,value=value,dir_x=0,dir_y=-1,target_moves=win_length)
+    # x+1 y-1 = up right
+    ur=check_completion(game_obj,x,y,value=value,dir_x=1,dir_y=-1,target_moves=win_length)
+    #score time
+    return sum([r,dr,d,dl,l,ul,u,ur])
+
 def improved_eval(game_obj:game.Grid,win_length:int):
     #rough algo description:
     eval_grid=[[0 for col in range(game_obj._x)] for row in range(game_obj._y)]
@@ -226,24 +246,8 @@ def improved_eval(game_obj:game.Grid,win_length:int):
                 y=j+1
                 #calculate how many ways are there to reach a victory in x moves
                 #similar to game_obj.evaluate_heuristics():
-                # x+1 y = right
-                r=check_completion(game_obj,x+1,y,value=Space.BLACK.value,dir_x=1,dir_y=0,target_moves=win_length)
-                # x+1 y+1 = down right
-                dr=check_completion(game_obj,x+1,y+1,value=Space.BLACK.value,dir_x=1,dir_y=1,target_moves=win_length)
-                # x y+1 = down
-                d=check_completion(game_obj,x,y+1,value=Space.BLACK.value,dir_x=0,dir_y=1,target_moves=win_length)
-                # x-1 y+1 = down left
-                dl=check_completion(game_obj,x-1,y+1,value=Space.BLACK.value,dir_x=-1,dir_y=1,target_moves=win_length)
-                # x-1 y = left
-                l=check_completion(game_obj,x-1,y,value=Space.BLACK.value,dir_x=-1,dir_y=0,target_moves=win_length)
-                # x-1 y-1 = up left
-                ul=check_completion(game_obj,x-1,y-1,value=Space.BLACK.value,dir_x=-1,dir_y=-1,target_moves=win_length)
-                # x y-1 = up
-                u=check_completion(game_obj,x,y-1,value=Space.BLACK.value,dir_x=0,dir_y=-1,target_moves=win_length)
-                # x+1 y-1 = up right
-                ur=check_completion(game_obj,x+1,y-1,value=Space.BLACK.value,dir_x=1,dir_y=-1,target_moves=win_length)
-                #score time
-                eval_grid[j][i]=sum([r,dr,d,dl,l,ul,u,ur])
+                eval_grid[j][i]=check_completion_all_directions(game_obj,x,y,Space.BLACK.value,win_length)
+
             #how did the coefficients change after one's move in P.
             #calculated coefficients to be added up, multiplied by k^(-1) where k=10
             #check in 3 stages, P has a white peg, a black peg or is empty

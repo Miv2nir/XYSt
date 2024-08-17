@@ -51,10 +51,10 @@ def test4():
 
 def test5():
     g=game.Grid()
-    g.put(5,5,names.Space.BLACK)
-    g.put(6,6,names.Space.BLACK)
-    g.put(7,7,names.Space.BLACK)
-    g.put(8,8,names.Space.BLACK)
+    #g.put(5,5,names.Space.BLACK)
+    #g.put(6,6,names.Space.BLACK)
+    #g.put(7,7,names.Space.BLACK)
+    g.put(8,8,names.Space.WHITE)
     g.print_grid()
     print()
     g_bruh=game.Grid()
@@ -69,4 +69,12 @@ def test5_1():
 
     g.print_grid()
     print()
-    print(alg.check_completion(g,1,1,Space.BLACK.value,1,0,2))
+    print(alg.check_completion(g,1,1,Space.BLACK.value,1,0,3))
+
+def test5_2():
+    g=game.Grid()
+    g.put(8,8,names.Space.BLACK)
+    g.print_grid()
+    print()
+    g_bruh=game.Grid()
+    print(alg.check_completion_all_directions(g,7,8,Space.BLACK.value,5))
