@@ -233,7 +233,7 @@ def check_completion_all_directions(game_obj,x,y,value,win_length):
     #score time
     return sum([r,dr,d,dl,l,ul,u,ur])
 
-def improved_eval(game_obj:game.Grid,win_length:int):
+def improved_eval(game_obj:game.Grid,win_length:int,value=Space.BLACK.value):
     #rough algo description:
     eval_grid=[[0 for col in range(game_obj._x)] for row in range(game_obj._y)]
     #For every point:
@@ -246,7 +246,7 @@ def improved_eval(game_obj:game.Grid,win_length:int):
                 y=j+1
                 #calculate how many ways are there to reach a victory in x moves
                 #similar to game_obj.evaluate_heuristics():
-                eval_grid[j][i]=check_completion_all_directions(game_obj,x,y,Space.BLACK.value,win_length)
+                eval_grid[j][i]=check_completion_all_directions(game_obj,x,y,value,win_length)
 
             #how did the coefficients change after one's move in P.
             #calculated coefficients to be added up, multiplied by k^(-1) where k=10
@@ -257,14 +257,15 @@ def improved_eval(game_obj:game.Grid,win_length:int):
 def alg_improved(game_obj:game.Grid):
     '''New version of a linear evaluation function algorithm previously used as part of a minimax process'''
     k=10
-    score_matrix=improved_eval(game_obj,0)
-    for a in range(1,game_obj.win_white):
+    score_matrix=improved_eval(game_obj,1)
+    for a in range(2,game_obj.win_black+1):
         intermediate_score_matrix=improved_eval(game_obj,a)
         for i in range(game_obj._x):
             for j in range(game_obj._y):
-                intermediate_score_matrix[j][i]*=(k**(-a-1))
+                intermediate_score_matrix[j][i]*=(k**(game_obj.win_black-a))
                 score_matrix[j][i]+=intermediate_score_matrix[j][i]
     #calc the highest diff
+    return score_matrix
 
 
 
