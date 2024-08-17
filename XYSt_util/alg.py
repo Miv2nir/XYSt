@@ -4,6 +4,7 @@ from XYSt_util.names import Names,Space
 import random,copy
 from math import inf
 import threading,multiprocessing,time
+import numpy as np
 
 def if_terminal(game_obj:game.Grid):
     thought=game_obj.evaluate()
@@ -267,15 +268,39 @@ def alg_improved(game_obj:game.Grid,value):
     #calc the highest diff
     return score_matrix
 
+def double_sum(grid):
+    return np.sum(grid)
+
 def alg_improved_comparison(game_obj:game.Grid,defense_coefficient=1):
     '''Wrapper for alg_improved that runs it for blacks and whites and then compares both'''
-    scores_black=alg_improved(game_obj,value=Space.BLACK.value)
-    scores_white=alg_improved(game_obj,value=Space.WHITE.value)
-    scores_final=[[0 for col in range(game_obj._x)] for row in range(game_obj._y)]
+    score_black=double_sum(alg_improved(game_obj,value=Space.BLACK.value))
+    score_white=double_sum(alg_improved(game_obj,value=Space.WHITE.value))
+    #og_score=double_sum(scores_black)*defense_coefficient - double_sum(scores_white)
+    #iterate through the entire grid, test for the next placement
+    d=dict()
+
+    #scores_final=[[0 for col in range(game_obj._x)] for row in range(game_obj._y)]
     for i in range(game_obj._x):
         for j in range(game_obj._y):
-            scores_final[j][i]=defense_coefficient*scores_black[j][i]-scores_white[j][i]
-    return scores_final
+            x=i+1
+            y=j+1
+            if game_obj.get_value(x,y)!=Space.EMPTY.value:
+                continue
+            future_game_obj=copy.deepcopy(game_obj)
+            future_game_obj.put(x,y,Space.BLACK)
+            new_score_black=double_sum(alg_improved(future_game_obj,value=Space.BLACK.value))
+            new_score_white=double_sum(alg_improved(future_game_obj,value=Space.WHITE.value))
+            d[(x,y)]=(new_score_black-score_black)*defense_coefficient-(new_score_white-score_white)
+    max_val=-inf
+    final_x=0
+    final_y=0
+    for i in d.keys():
+        if d[i]>max_val:
+            max_val=d[i]
+            final_x,final_y=i
+    
+    return (final_x,final_y)
+
 
 
     

@@ -89,8 +89,8 @@ def main():
     white=players.Player(Names.WHITE)
     black=players.Player(Names.BLACK)
     
-    #runtime(white,black,presets,presets_win_lengths,decision_max_seconds,win_black,win_white)
-    archive.test5()
+    runtime(white,black,presets,presets_win_lengths,decision_max_seconds,win_black,win_white)
+    #archive.test5()
 
 if __name__ == '__main__':
     main()
