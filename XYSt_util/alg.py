@@ -203,6 +203,8 @@ def check_completion(game_obj:game.Grid,x,y,value,dir_x,dir_y,target_moves):
         if game_obj.get_piece(x,y).value!=value and game_obj.get_piece(x,y)!=0:
             return 0
         length+=1
+        if game_obj.get_piece(x,y)==0:
+            zero_count+=1
     if zero_count>target_moves:
         return 0
     return 1

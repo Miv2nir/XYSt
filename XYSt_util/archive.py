@@ -63,10 +63,10 @@ def test5():
 
 def test5_1():
     g=game.Grid()
-    for i in range(2,6):
+    for i in range(2,4):
         g.put(i,1,names.Space.BLACK)
 
 
     g.print_grid()
     print()
-    print(alg.check_completion(g,1,1,Space.BLACK.value,1,1,5))
+    print(alg.check_completion(g,1,1,Space.BLACK.value,1,0,2))
