@@ -264,13 +264,50 @@ def alg_improved(game_obj:game.Grid,value,k=10):
             for j in range(game_obj._y):
                 intermediate_score_matrix[j][i]*=(k**(game_obj.win_black-a))
                 score_matrix[j][i]+=intermediate_score_matrix[j][i]
+        g_bruh=game.Grid()
+        g_bruh.set_grid(score_matrix)
+        g_bruh.print_grid()
+        print()
     #calc the highest diff
     return score_matrix
 
 def double_sum(grid):
     return np.sum(grid)
 
-def alg_improved_comparison(game_obj:game.Grid,alpha=0.8,a=8,b=10):
+def alg_improved_comparison(game_obj:game.Grid,alpha=1,a=10,b=10):
+    '''Wrapper for alg_improved that runs it for blacks and whites and then compares both'''
+    scores_black=alg_improved(game_obj,value=Space.BLACK.value)
+    scores_white=alg_improved(game_obj,value=Space.WHITE.value)
+    #og_score=double_sum(scores_black)*alpha - double_sum(scores_white)
+    #iterate through the entire grid, test for the next placement
+    d=dict()
+    #scores_final=[[0 for col in range(game_obj._x)] for row in range(game_obj._y)]
+    for i in range(game_obj._x):
+        for j in range(game_obj._y):
+            x=i+1
+            y=j+1
+            if game_obj.get_value(x,y)!=Space.EMPTY.value:
+                continue
+            score_black=scores_black[j][i]
+            score_white=scores_white[j][i]
+            #remove comparison to the old move
+            d[(x,y)]=(score_black)*alpha+(score_white)
+            #print(d)
+    #picking the best option available
+    max_val=-inf
+    final_x=0
+    final_y=0
+    for i in d.keys():
+        if d[i]>max_val:
+            max_val=d[i]
+            final_x,final_y=i
+    for i in d.keys():
+        if d[i]==max_val:
+            print(i,end=' ')
+    print()
+    return (final_x,final_y)
+
+def alg_improved_sum(game_obj:game.Grid,alpha=0.8,a=8,b=10):
     '''Wrapper for alg_improved that runs it for blacks and whites and then compares both'''
     #score_black=double_sum(alg_improved(game_obj,value=Space.BLACK.value))
     #score_white=double_sum(alg_improved(game_obj,value=Space.WHITE.value))
@@ -291,7 +328,7 @@ def alg_improved_comparison(game_obj:game.Grid,alpha=0.8,a=8,b=10):
             score_white=double_sum(alg_improved(future_game_obj,value=Space.WHITE.value,k=b))
             #remove comparison to the old move
             d[(x,y)]=(score_black)*alpha+(score_white)
-            print(d)
+            #print(d)
     #picking the best option available
     max_val=-inf
     final_x=0
@@ -300,6 +337,10 @@ def alg_improved_comparison(game_obj:game.Grid,alpha=0.8,a=8,b=10):
         if d[i]>max_val:
             max_val=d[i]
             final_x,final_y=i
+    for i in d.keys():
+        if d[i]==max_val:
+            print(i,end=' ')
+    print()
     
     return (final_x,final_y)
 

@@ -56,15 +56,17 @@ def test5():
     #g.put(7,7,names.Space.BLACK)
     #g.put(8,8,names.Space.WHITE)
     g.put(8,8,names.Space.BLACK)
-    g.put(9,9,names.Space.BLACK)
+    g.put(9,9,names.Space.WHITE)
     g.print_grid()
     print()
+    
     g_bruh=game.Grid()
-    #g_bruh.set_grid(alg.alg_improved_comparison(g))
-    for i in range(1,6):
-        print(i)
-        g_bruh.set_grid(alg.improved_eval(g,i))
-        g_bruh.print_grid()
+    g_bruh.set_grid(alg.alg_improved(g,names.Space.BLACK.value))
+    g_bruh.print_grid()
+    #for i in range(1,6):
+    #    print(i)
+    #    g_bruh.set_grid(alg.improved_eval(g,i))
+    #    g_bruh.print_grid()
     #print(g_bruh.get_value(4,4))
     #print(alg.double_sum(g_bruh.get_grid()))
 
