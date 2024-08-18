@@ -255,11 +255,10 @@ def improved_eval(game_obj:game.Grid,win_length:int,value=Space.BLACK.value):
             #pick a point with the largest difference
     return eval_grid
 
-def alg_improved(game_obj:game.Grid,value):
+def alg_improved(game_obj:game.Grid,value,k=10):
     '''New version of a linear evaluation function algorithm previously used as part of a minimax process'''
-    k=10
-    score_matrix=improved_eval(game_obj,1)
-    for a in range(2,game_obj.win_black+1):
+    score_matrix=[[0 for col in range(game_obj._x)] for row in range(game_obj._y)]
+    for a in range(1,game_obj.win_black+1):
         intermediate_score_matrix=improved_eval(game_obj,a,value)
         for i in range(game_obj._x):
             for j in range(game_obj._y):
@@ -271,11 +270,11 @@ def alg_improved(game_obj:game.Grid,value):
 def double_sum(grid):
     return np.sum(grid)
 
-def alg_improved_comparison(game_obj:game.Grid,aggression_coefficient=1):
+def alg_improved_comparison(game_obj:game.Grid,alpha=0.8,a=8,b=10):
     '''Wrapper for alg_improved that runs it for blacks and whites and then compares both'''
     #score_black=double_sum(alg_improved(game_obj,value=Space.BLACK.value))
     #score_white=double_sum(alg_improved(game_obj,value=Space.WHITE.value))
-    #og_score=double_sum(scores_black)*aggression_coefficient - double_sum(scores_white)
+    #og_score=double_sum(scores_black)*alpha - double_sum(scores_white)
     #iterate through the entire grid, test for the next placement
     d=dict()
 
@@ -288,10 +287,10 @@ def alg_improved_comparison(game_obj:game.Grid,aggression_coefficient=1):
                 continue
             future_game_obj=copy.deepcopy(game_obj)
             future_game_obj.put(x,y,Space.BLACK)
-            score_black=double_sum(alg_improved(future_game_obj,value=Space.BLACK.value))
-            score_white=double_sum(alg_improved(future_game_obj,value=Space.WHITE.value))
+            score_black=double_sum(alg_improved(future_game_obj,value=Space.BLACK.value,k=a))
+            score_white=double_sum(alg_improved(future_game_obj,value=Space.WHITE.value,k=b))
             #remove comparison to the old move
-            d[(x,y)]=(score_black)*aggression_coefficient+(score_white)
+            d[(x,y)]=(score_black)*alpha+(score_white)
             print(d)
     #picking the best option available
     max_val=-inf
