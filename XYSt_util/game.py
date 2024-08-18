@@ -7,9 +7,6 @@ class Grid:
         
         self.win_white=win_white
         self.win_black=win_black
-        
-        self.store_black=[[0 for col in range(x)] for row in range(y)] #for algoritm purposes
-        self.store_white=[[0 for col in range(x)] for row in range(y)]
 
     def print_grid(self):
         for i in self._grid:
@@ -173,6 +170,6 @@ class Grid:
                         #white
                         white_score=min(white_score,-r,-dr,-d,-dl,-l,-ul,-u,-ur) #<0
         #got our scores and everything
-
+        debug=(black_score+white_score)/self.win_black
         return (black_score+white_score)/self.win_black
     

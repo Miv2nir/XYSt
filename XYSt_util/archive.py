@@ -60,6 +60,7 @@ def test5():
     print()
     g_bruh=game.Grid()
     g_bruh.set_grid(alg.alg_improved_comparison(g))
+    g_bruh.set_grid(alg.improved_eval(g,3))
     g_bruh.print_grid()
     print(g_bruh.get_value(4,4))
     print(alg.double_sum(g_bruh.get_grid()))

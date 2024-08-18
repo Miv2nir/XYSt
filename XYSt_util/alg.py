@@ -93,7 +93,7 @@ def alg_minimax(game_obj:game.Grid,depth=inf):
             future_game_obj=copy.deepcopy(game_obj)
             future_game_obj.put(i+1,j+1,Space.BLACK)
             d[(i+1,j+1)]=minimax(future_game_obj,i+1,j+1,depth=depth,black=False)
-            #print(d)
+            print(d)
     
     if max(d.values())==min(d.values()):
         substitute=(0,0)
@@ -190,7 +190,7 @@ def alg_minimax_timed(game_obj:game.Grid,decision_max_seconds):
     return best_x,best_y
 
 def check_completion(game_obj:game.Grid,x,y,value,dir_x,dir_y,target_moves):
-    '''Rewrite of game_obj._check_heuristics() to work with improved_eval.
+    '''Rewrite of game_obj._check_heuristics() to work with improved_evaluation.
     Checks whether the line can be completed in a given direction (returns 0 or 1 integer)'''
     #x,y - starter coordinates
     #check if a spot is already occupied or not
@@ -271,11 +271,11 @@ def alg_improved(game_obj:game.Grid,value):
 def double_sum(grid):
     return np.sum(grid)
 
-def alg_improved_comparison(game_obj:game.Grid,defense_coefficient=1):
+def alg_improved_comparison(game_obj:game.Grid,aggression_coefficient=1):
     '''Wrapper for alg_improved that runs it for blacks and whites and then compares both'''
-    score_black=double_sum(alg_improved(game_obj,value=Space.BLACK.value))
-    score_white=double_sum(alg_improved(game_obj,value=Space.WHITE.value))
-    #og_score=double_sum(scores_black)*defense_coefficient - double_sum(scores_white)
+    #score_black=double_sum(alg_improved(game_obj,value=Space.BLACK.value))
+    #score_white=double_sum(alg_improved(game_obj,value=Space.WHITE.value))
+    #og_score=double_sum(scores_black)*aggression_coefficient - double_sum(scores_white)
     #iterate through the entire grid, test for the next placement
     d=dict()
 
@@ -288,9 +288,12 @@ def alg_improved_comparison(game_obj:game.Grid,defense_coefficient=1):
                 continue
             future_game_obj=copy.deepcopy(game_obj)
             future_game_obj.put(x,y,Space.BLACK)
-            new_score_black=double_sum(alg_improved(future_game_obj,value=Space.BLACK.value))
-            new_score_white=double_sum(alg_improved(future_game_obj,value=Space.WHITE.value))
-            d[(x,y)]=(new_score_black-score_black)*defense_coefficient-(new_score_white-score_white)
+            score_black=double_sum(alg_improved(future_game_obj,value=Space.BLACK.value))
+            score_white=double_sum(alg_improved(future_game_obj,value=Space.WHITE.value))
+            #remove comparison to the old move
+            d[(x,y)]=(score_black)*aggression_coefficient+(score_white)
+            print(d)
+    #picking the best option available
     max_val=-inf
     final_x=0
     final_y=0
