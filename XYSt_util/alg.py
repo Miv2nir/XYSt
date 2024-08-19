@@ -93,7 +93,7 @@ def alg_minimax(game_obj:game.Grid,depth=inf):
             future_game_obj=copy.deepcopy(game_obj)
             future_game_obj.put(i+1,j+1,Space.BLACK)
             d[(i+1,j+1)]=minimax(future_game_obj,i+1,j+1,depth=depth,black=False)
-            print(d)
+            #print(d)
     
     if max(d.values())==min(d.values()):
         substitute=(0,0)
@@ -200,7 +200,11 @@ def check_completion(game_obj:game.Grid,x,y,value,dir_x,dir_y,target_moves):
         return 0
     length=1
     zero_count=1
-    while length<game_obj.win_white:
+    if value==Space.WHITE.value:
+        win_length=game_obj.win_white
+    else:
+        win_length=game_obj.win_black
+    while length<win_length:
         x+=dir_x
         y+=dir_y
         if game_obj.is_out_of_bounds(x,y):
@@ -262,7 +266,7 @@ def alg_improved(game_obj:game.Grid,value,k=10):
     win_length=game_obj.win_black
     if value==Space.WHITE:
         win_length=game_obj.win_white
-        
+
     for a in range(1,win_length+1):
         intermediate_score_matrix=improved_eval(game_obj,a,value)
         for i in range(game_obj._x):
@@ -272,15 +276,121 @@ def alg_improved(game_obj:game.Grid,value,k=10):
         g_bruh=game.Grid()
         g_bruh.set_grid(score_matrix)
         g_bruh.print_grid()
-        print()
+        #print()
     #calc the highest diff
     return score_matrix
 
 def double_sum(grid):
     return np.sum(grid)
 
+def check_completion_rush(game_obj:game.Grid,x,y,value,dir_x,dir_y,target_moves):
+    '''Rewrite of game_obj._check_heuristics() to work with improved_evaluation.
+    Checks whether the line can be completed in a given direction specifically for the rush algorithm
+    Checks only from the filled in points, returns in how many moves the line can be completed.
+    Returns coordinates that shall be filled in to win.'''
+    #x,y - starter coordinates
+    #check if a spot is already occupied or not
+    if game_obj.is_out_of_bounds(x,y):
+        return set()
+    if game_obj.get_piece(x,y).value==0: #double check
+        return set()
+    length=1
+    zero_coords=set()
+    if value==Space.WHITE.value:    
+        win_length=game_obj.win_white
+    else:
+        win_length=game_obj.win_black
+    while length<win_length:
+        x+=dir_x
+        y+=dir_y
+        if game_obj.is_out_of_bounds(x,y):
+            return set()
+        if game_obj.get_piece(x,y).value!=value and game_obj.get_piece(x,y)!=Space.EMPTY:
+            return set()
+        length+=1
+        if game_obj.get_piece(x,y)==Space.EMPTY:
+            zero_coords.add((x,y))
+    if len(zero_coords)>target_moves:
+        return set()
+    return zero_coords
+
+def check_completion_rush_all(game_obj,x,y,value,max_moves):
+    r=check_completion_rush(game_obj,x,y,value=value,dir_x=1,dir_y=0,target_moves=max_moves)
+    # x+1 y+1 = down right
+    dr=check_completion_rush(game_obj,x,y,value=value,dir_x=1,dir_y=1,target_moves=max_moves)
+    # x y+1 = down
+    d=check_completion_rush(game_obj,x,y,value=value,dir_x=0,dir_y=1,target_moves=max_moves)
+    # x-1 y+1 = down left
+    dl=check_completion_rush(game_obj,x,y,value=value,dir_x=-1,dir_y=1,target_moves=max_moves)
+    # x-1 y = left
+    l=check_completion_rush(game_obj,x,y,value=value,dir_x=-1,dir_y=0,target_moves=max_moves)
+    # x-1 y-1 = up left
+    ul=check_completion_rush(game_obj,x,y,value=value,dir_x=-1,dir_y=-1,target_moves=max_moves)
+    # x y-1 = up
+    u=check_completion_rush(game_obj,x,y,value=value,dir_x=0,dir_y=-1,target_moves=max_moves)
+    # x+1 y-1 = up right
+    ur=check_completion_rush(game_obj,x,y,value=value,dir_x=1,dir_y=-1,target_moves=max_moves)
+    #score time
+    min_moves=inf
+    final=set()
+    for i in [r,dr,d,dl,l,ul,u,ur]:
+        if len(i)<min_moves:
+            min_moves=len(i)
+            final=i
+        else:
+            final=final.union(i)
+    return (len(i),final)    
+
+def alg_rush(game_obj:game.Grid,max_moves=1):
+    '''Helper algorithm that attempts to rush a win'''
+    moves_white=set()
+    moves_black=set()
+    distance_to_win_white=game_obj.win_white
+    distance_to_win_black=game_obj.win_black
+    for i in range(game_obj._x):
+        for j in range(game_obj._y):
+            x=i+1
+            y=j+1
+            if game_obj.get_piece(x,y)==Space.EMPTY:
+                continue
+            if game_obj.get_piece(x,y)==Space.WHITE:
+                thought=check_completion_rush_all(game_obj,x,y,Space.WHITE.value,max_moves)
+                if thought[1]==set(): #no actual way to proceed
+                    pass
+                elif thought[0]<distance_to_win_white:
+                    distance_to_win_white=thought[0]
+                    moves_white=thought[1]
+                else:
+                    moves_white=moves_white.union(thought[1])
+            
+            if game_obj.get_piece(x,y)==Space.BLACK:
+                thought=check_completion_rush_all(game_obj,x,y,Space.BLACK.value,max_moves)
+                if thought[1]==set(): #no actual way to proceed
+                    pass
+                elif thought[0]<distance_to_win_black:
+                    distance_to_win_black=thought[0]
+                    moves_black=thought[1]
+                else:
+                    moves_black=moves_black.union(thought[1])
+    #check if empty
+    if moves_white==set() and moves_black==set():
+        return False
+    else:
+        if distance_to_win_black<=distance_to_win_white:
+            i=random.randrange(0,len(moves_black))
+            return list(moves_black)[i]
+        else:
+            i=random.randrange(0,len(moves_white))
+            return list(moves_white)[i]
+            
+
 def alg_improved_comparison(game_obj:game.Grid,alpha=1,a=10,b=10):
     '''Wrapper for alg_improved that runs it for blacks and whites and then compares both'''
+    #first of all check if a rushed win is possible
+    thought=alg_rush(game_obj,max_moves=1)
+    if thought!=False:
+        return thought
+    #regular algorithm because the alg_rush did not find any possible to finish immediately positions
     scores_black=alg_improved(game_obj,value=Space.BLACK.value)
     scores_white=alg_improved(game_obj,value=Space.WHITE.value)
     #og_score=double_sum(scores_black)*alpha - double_sum(scores_white)
@@ -306,10 +416,10 @@ def alg_improved_comparison(game_obj:game.Grid,alpha=1,a=10,b=10):
         if d[i]>max_val:
             max_val=d[i]
             final_x,final_y=i
-    for i in d.keys():
-        if d[i]==max_val:
-            print(i,end=' ')
-    print()
+    #for i in d.keys():
+    #    if d[i]==max_val:
+            #print(i,end=' ')
+    #print()
     return (final_x,final_y)
 
 def alg_improved_sum(game_obj:game.Grid,alpha=0.8,a=8,b=10):
@@ -342,10 +452,10 @@ def alg_improved_sum(game_obj:game.Grid,alpha=0.8,a=8,b=10):
         if d[i]>max_val:
             max_val=d[i]
             final_x,final_y=i
-    for i in d.keys():
-        if d[i]==max_val:
-            print(i,end=' ')
-    print()
+    #for i in d.keys():
+    #    if d[i]==max_val:
+            #print(i,end=' ')
+    #print()
     
     return (final_x,final_y)
 
