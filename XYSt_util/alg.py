@@ -258,7 +258,12 @@ def improved_eval(game_obj:game.Grid,win_length:int,value=Space.BLACK.value):
 def alg_improved(game_obj:game.Grid,value,k=10):
     '''New version of a linear evaluation function algorithm previously used as part of a minimax process'''
     score_matrix=[[0 for col in range(game_obj._x)] for row in range(game_obj._y)]
-    for a in range(1,game_obj.win_black+1):
+
+    win_length=game_obj.win_black
+    if value==Space.WHITE:
+        win_length=game_obj.win_white
+        
+    for a in range(1,win_length+1):
         intermediate_score_matrix=improved_eval(game_obj,a,value)
         for i in range(game_obj._x):
             for j in range(game_obj._y):
