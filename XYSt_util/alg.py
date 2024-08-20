@@ -384,15 +384,18 @@ def alg_rush(game_obj:game.Grid,max_moves=1):
             return list(moves_white)[i]
             
 
-def alg_improved_comparison(game_obj:game.Grid,alpha=1,a=10,b=10):
+def alg_improved_comparison(game_obj:game.Grid):
     '''Wrapper for alg_improved that runs it for blacks and whites and then compares both'''
     #first of all check if a rushed win is possible
+    alpha=game_obj.alpha
+    a=game_obj.a
+    b=game_obj.b
     thought=alg_rush(game_obj,max_moves=1)
     if thought!=False:
         return thought
     #regular algorithm because the alg_rush did not find any possible to finish immediately positions
-    scores_black=alg_improved(game_obj,value=Space.BLACK.value)
-    scores_white=alg_improved(game_obj,value=Space.WHITE.value)
+    scores_black=alg_improved(game_obj,value=Space.BLACK.value,k=b)
+    scores_white=alg_improved(game_obj,value=Space.WHITE.value,k=a)
     #og_score=double_sum(scores_black)*alpha - double_sum(scores_white)
     #iterate through the entire grid, test for the next placement
     d=dict()
@@ -423,7 +426,7 @@ def alg_improved_comparison(game_obj:game.Grid,alpha=1,a=10,b=10):
     return (final_x,final_y)
 
 def alg_improved_sum(game_obj:game.Grid,alpha=0.8,a=8,b=10):
-    '''Wrapper for alg_improved that runs it for blacks and whites and then compares both'''
+    '''Wrapper for alg_improved that runs it for blacks and whites and then compares both (works badly)'''
     #score_black=double_sum(alg_improved(game_obj,value=Space.BLACK.value))
     #score_white=double_sum(alg_improved(game_obj,value=Space.WHITE.value))
     #og_score=double_sum(scores_black)*alpha - double_sum(scores_white)

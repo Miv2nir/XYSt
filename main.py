@@ -14,7 +14,7 @@ def option_picker_int(options:set):
             return option
         print('Incorrect option number specified.')
 
-def runtime(white,black,presets,presets_win_lengths,decision_max_seconds,win_black,win_white):
+def runtime(white,black,presets,presets_win_lengths,decision_max_seconds,win_black,win_white,alpha,a,b):
     '''runtime for the CLI play'''
     print('Select an option:')
     print('1. Load a field preset')
@@ -24,6 +24,11 @@ def runtime(white,black,presets,presets_win_lengths,decision_max_seconds,win_bla
     g=game.Grid()
     g.win_black=win_black
     g.win_white=win_white
+    #insert algorithm parameters
+    g.alpha=alpha
+    g.a=a
+    g.b=b 
+    
     global decision_max_time
     decision_max_time=decision_max_seconds
 
@@ -70,9 +75,15 @@ def runtime(white,black,presets,presets_win_lengths,decision_max_seconds,win_bla
 
 
 def main():
-    decision_max_seconds=10
+    #settings
+    decision_max_seconds=10 #does not work with the current algorithm in place
     win_black=5
     win_white=5
+    #algorithm parameters
+    alpha=1 #agression 
+    a=10 #evaluation factor for the white player
+    b=10 #evaluation factor for the black player
+    
     presets={
         'default':[[0 for col in range(15)] for row in range(15)],
         'small':[[0 for col in range(5)] for row in range(5)],
@@ -89,7 +100,7 @@ def main():
     white=players.Player(Names.WHITE)
     black=players.Player(Names.BLACK)
     
-    runtime(white,black,presets,presets_win_lengths,decision_max_seconds,win_black,win_white)
+    runtime(white,black,presets,presets_win_lengths,decision_max_seconds,win_black,win_white,alpha,a,b)
     #archive.test5()
 
 if __name__ == '__main__':
