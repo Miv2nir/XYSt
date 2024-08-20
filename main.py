@@ -14,7 +14,7 @@ def option_picker_int(options:set):
             return option
         print('Incorrect option number specified.')
 
-def runtime(white,black,presets,presets_win_lengths,decision_max_seconds,win_black,win_white,alpha,a,b):
+def runtime(white,black,presets,presets_win_lengths,decision_max_seconds,win_black,win_white,alpha,a,b,rush_value):
     '''runtime for the CLI play'''
     print('Select an option:')
     print('1. Load a field preset')
@@ -28,6 +28,7 @@ def runtime(white,black,presets,presets_win_lengths,decision_max_seconds,win_bla
     g.alpha=alpha
     g.a=a
     g.b=b 
+    g.rush_value=rush_value
     
     global decision_max_time
     decision_max_time=decision_max_seconds
@@ -83,7 +84,7 @@ def main():
     alpha=1 #agression 
     a=10 #evaluation factor for the white player
     b=10 #evaluation factor for the black player
-    
+    rush_value=1 #in how many moves until one's victory the alg_rush() shall trigger
     presets={
         'default':[[0 for col in range(15)] for row in range(15)],
         'small':[[0 for col in range(5)] for row in range(5)],
@@ -100,7 +101,7 @@ def main():
     white=players.Player(Names.WHITE)
     black=players.Player(Names.BLACK)
     
-    runtime(white,black,presets,presets_win_lengths,decision_max_seconds,win_black,win_white,alpha,a,b)
+    runtime(white,black,presets,presets_win_lengths,decision_max_seconds,win_black,win_white,alpha,a,b,rush_value)
     #archive.test5()
 
 if __name__ == '__main__':

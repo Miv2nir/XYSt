@@ -1,16 +1,17 @@
 from XYSt_util.names import Names,Space
 class Grid:
-    def __init__(self,x=15,y=15,win_white=5,win_black=5,alpha=1,a=10,b=10):
+    def __init__(self,x=15,y=15,win_white=5,win_black=5,alpha=1,a=10,b=10,rush_value=1):
         self._x=x
         self._y=y
         self._grid = [[0 for col in range(x)] for row in range(y)]
         
         self.win_white=win_white
         self.win_black=win_black
-        #for algorithm stuff
+        #algorithm stuff
         self.alpha=alpha
         self.a=a
         self.b=b
+        self.rush_value=rush_value
 
     def print_grid(self):
         for i in self._grid:

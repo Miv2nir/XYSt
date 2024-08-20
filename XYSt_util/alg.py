@@ -390,7 +390,8 @@ def alg_improved_comparison(game_obj:game.Grid):
     alpha=game_obj.alpha
     a=game_obj.a
     b=game_obj.b
-    thought=alg_rush(game_obj,max_moves=1)
+    rush_value=game_obj.rush_value
+    thought=alg_rush(game_obj,max_moves=rush_value)
     if thought!=False:
         return thought
     #regular algorithm because the alg_rush did not find any possible to finish immediately positions
