@@ -273,9 +273,9 @@ def alg_improved(game_obj:game.Grid,value,k=10):
             for j in range(game_obj._y):
                 intermediate_score_matrix[j][i]*=(k**(game_obj.win_black-a))
                 score_matrix[j][i]+=intermediate_score_matrix[j][i]
-        g_bruh=game.Grid()
-        g_bruh.set_grid(score_matrix)
-        g_bruh.print_grid()
+        #g_bruh=game.Grid()
+        #g_bruh.set_grid(score_matrix)
+        #g_bruh.print_grid()
         #print()
     #calc the highest diff
     return score_matrix
