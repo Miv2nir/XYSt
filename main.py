@@ -52,9 +52,12 @@ def runtime(white,black,presets,presets_win_lengths,decision_max_seconds,win_bla
         g=game.Grid(x,y)
         g.win_white,g.win_black=map(int,input("Enter win condition lenghts for white & black respectively: ").split())
     g.print_grid()
-
+    print('Who is making the first move? (player, bot)')
+    first_move=option_picker_str({'player','bot'})
     #gaming time
     game_over=False
+    if first_move=='bot':
+        game_over=black.analyze(g,decision_max_seconds,move=True,verbal=True)
     while not game_over:
         white_x,white_y=map(int,input('Select a space to place a peg in: ').split())
         #out of bounds check
@@ -68,11 +71,14 @@ def runtime(white,black,presets,presets_win_lengths,decision_max_seconds,win_bla
             continue
         #continuing on
         white.move(g,white_x,white_y,verbal=True)
+        g.log(Names.WHITE,white_x,white_y)
         g.print_grid()
         white_win=g.evaluate(verbal=True)
         if white_win==Space.WHITE.name:
+            print(g.log_dict)
             exit(0) #the game is over
         game_over=black.analyze(g,decision_max_seconds,move=True,verbal=True)
+    print(g.log_dict)
 
 
 def main():

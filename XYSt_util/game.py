@@ -12,6 +12,15 @@ class Grid:
         self.a=a
         self.b=b
         self.rush_value=rush_value
+        self.log_dict=dict()
+
+    def log(self,color:Names,x:int,y:int):
+        '''Logs a move to be then printed out'''
+        keynum=str((len(self.log_dict)+2)//2)
+        while len(keynum)<3:
+            keynum='0'+keynum
+        keyletter=color.name[0].lower()
+        self.log_dict[keyletter+keynum]=(x,y)
 
     def print_grid(self):
         for i in self._grid:
