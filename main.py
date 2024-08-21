@@ -75,10 +75,10 @@ def runtime(white,black,presets,presets_win_lengths,decision_max_seconds,win_bla
         g.print_grid()
         white_win=g.evaluate(verbal=True)
         if white_win==Space.WHITE.name:
-            print(g.log_dict)
+            print(str(g.log_dict).replace('\'','"'))
             exit(0) #the game is over
         game_over=black.analyze(g,decision_max_seconds,move=True,verbal=True)
-    print(g.log_dict)
+    print(str(g.log_dict).replace('\'','"'))
 
 
 def main():

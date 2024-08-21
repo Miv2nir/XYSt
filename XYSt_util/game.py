@@ -20,7 +20,7 @@ class Grid:
         while len(keynum)<3:
             keynum='0'+keynum
         keyletter=color.name[0].lower()
-        self.log_dict[keyletter+keynum]=(x,y)
+        self.log_dict[keyletter+keynum]=str((x,y))
 
     def print_grid(self):
         for i in self._grid:
