@@ -87,7 +87,7 @@ def main():
     win_black=5
     win_white=5
     #algorithm parameters
-    alpha=1 #agression 
+    alpha=1.2 #agression 
     a=10 #evaluation factor for the white player
     b=10 #evaluation factor for the black player
     rush_value=1 #in how many moves until one's victory the alg_rush() shall trigger
@@ -108,7 +108,7 @@ def main():
     black=players.Player(Names.BLACK)
     
     runtime(white,black,presets,presets_win_lengths,decision_max_seconds,win_black,win_white,alpha,a,b,rush_value)
-    #archive.test5()
+    #archive.test6()
 
 if __name__ == '__main__':
     main()

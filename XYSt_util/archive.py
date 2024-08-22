@@ -1,5 +1,7 @@
 from XYSt_util import game,players,names,alg
 from XYSt_util.names import Space
+
+import copy
 def test1():
     g=game.Grid()
     g.win_black=5
@@ -87,3 +89,30 @@ def test5_2():
     print()
     g_bruh=game.Grid()
     print(alg.check_completion_all_directions(g,7,8,Space.BLACK.value,5))
+
+def test6():
+    g=game.Grid()
+    #g.put(5,5,names.Space.BLACK)
+    #g.put(6,6,names.Space.WHITE)
+    #g.put(5,6,names.Space.BLACK)
+    #g.put(7,7,names.Space.WHITE)
+    #g.put(5,7,names.Space.BLACK)
+    #g.put(5,4,names.Space.WHITE)
+    #g.put(5,9,names.Space.BLACK)
+    #g.put(5,8,names.Space.WHITE)
+    #g_bruh=copy.deepcopy(g)
+    g.print_grid()
+    print()
+    g_bruh=game.Grid()
+    #g_bruh.set_grid(alg.improved_eval(g,win_length=4,value=Space.WHITE.value))
+    g_bruh.set_grid(alg.alg_improved(g,value=Space.BLACK.value))
+    #g_bruh.set_grid(alg.alg_improved(g,value=Space.WHITE.value))
+    
+    g_bruh.print_grid()
+    #print(g_bruh.get_value(8,8))
+    #print(g_bruh.get_value(10,10))
+    #aaa=4
+    #print(alg.check_completion_all_directions(g,9,9,-1,aaa))
+    #print(alg.check_completion_all_directions(g,10,10,-1,aaa))
+    #print(alg.find_root_all_directions(g,5,6,-1,aaa))
+    #print(alg.find_root_all_directions(g,10,10,-1,aaa))
