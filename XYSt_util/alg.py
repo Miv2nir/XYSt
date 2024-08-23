@@ -325,13 +325,70 @@ def find_root_all_directions(game_obj,x,y,value,win_length):
     # x+1 y-1 = up right
     ur=find_root(game_obj,x,y,value=value,dir_x=1,dir_y=-1,target_moves=win_length)
     #score time
-    return sum([r,dr,d,dl,l,ul,u,ur])
+    final_old=[r,dr,d,dl,l,ul,u,ur]
+    final_new=[max(r,l),max(dr,ul),max(dl,ur),max(u,d)]
+    return sum(final_old)
+
+def calc_line(game_obj:game.Grid,x,y,value,dir_x,dir_y,max_moves):
+    #given a direction, offset by win_length-1 moves
+    #begin a loop, going through the line for win_length times
+    #if out of bounds or otherwise the line cannot be completed, continue
+    #if the line can be completed within target moves, +1
+    #return the counted number
+    if value==Space.WHITE.value:
+        win_length=game_obj.win_white
+    if value==Space.BLACK.value:
+        win_length=game_obj.win_black
+    x-=(dir_x)*(win_length-1)
+    y-=(dir_y)*(win_length-1)
+    #coords are now in the beginning of the track
+    count_ways=0
+    for _ in range(win_length):
+        if game_obj.is_out_of_bounds(x,y): #skipping ahead
+            x+=dir_x
+            y+=dir_y
+            continue
+        zero_count=0
+        possible_to_finish=True
+        for i in range(win_length):
+            temp_x=x+(i*dir_x)
+            temp_y=y+(i*dir_y)
+            if game_obj.is_out_of_bounds(temp_x,temp_y):
+                possible_to_finish=False
+                break 
+            elif game_obj.get_piece(temp_x,temp_y).value==0:
+                zero_count+=1
+            elif game_obj.get_piece(temp_x,temp_y).value==value:
+                pass
+            else:
+                possible_to_finish=False
+                break
+        if possible_to_finish and zero_count<=max_moves:
+            count_ways+=1
+        x+=dir_x
+        y+=dir_y
+    return count_ways
+        
+
+
+def calc_ways(game_obj,x,y,value,win_length):
+    '''Yet another calc function that should count all the ways to fill in lines passing through a point and stuff'''
+    #4 directions
+    #left-right (treat as right)
+    r=calc_line(game_obj,x,y,value,1,0,win_length)
+    #up-down (treat as down)
+    d=calc_line(game_obj,x,y,value,0,1,win_length)
+    #upleft-downright (treat as downright)
+    dr=calc_line(game_obj,x,y,value,1,1,win_length)
+    #upright-downleft (treat as downleft)
+    dl=calc_line(game_obj,x,y,value,-1,1,win_length)
+    return sum([r,d,dr,dl])
 
 def improved_eval(game_obj:game.Grid,win_length:int,value=Space.BLACK.value):
     #rough algo description:
     eval_grid=[[0 for col in range(game_obj._x)] for row in range(game_obj._y)]
     #For every point:
-    calc_length=game_obj.win_white-win_length
+    #calc_length=game_obj.win_white-win_length
     for i in range(game_obj._x):
         for j in range(game_obj._y):
             #if point is zero:
@@ -340,7 +397,8 @@ def improved_eval(game_obj:game.Grid,win_length:int,value=Space.BLACK.value):
                 y=j+1
                 #calculate how many ways are there to reach a victory in x moves
                 #similar to game_obj.evaluate_heuristics():
-                eval_grid[j][i]=find_root_all_directions(game_obj,x,y,value,win_length)
+                #eval_grid[j][i]=find_root_all_directions(game_obj,x,y,value,win_length)
+                eval_grid[j][i]=calc_ways(game_obj,x,y,value,win_length)
 
             #how did the coefficients change after one's move in P.
             #calculated coefficients to be added up, multiplied by k^(-1) where k=10
@@ -360,7 +418,7 @@ def alg_improved(game_obj:game.Grid,value,k=10):
         intermediate_score_matrix=improved_eval(game_obj,a,value)
         for i in range(game_obj._x):
             for j in range(game_obj._y):
-                intermediate_score_matrix[j][i]*=(k**(game_obj.win_black-a))
+                intermediate_score_matrix[j][i]*=(k**(win_length-a))
                 score_matrix[j][i]+=intermediate_score_matrix[j][i]
         #g_bruh=game.Grid()
         #g_bruh.set_grid(score_matrix)
@@ -496,13 +554,11 @@ def alg_improved_comparison(game_obj:game.Grid):
             y=j+1
             if game_obj.get_value(x,y)!=Space.EMPTY.value:
                 continue
-            if x==9 and y==9:
-                print('lol')
             score_black=scores_black[j][i]
             score_white=scores_white[j][i]
             #remove comparison to the old move
             d[(x,y)]=(score_black)*alpha+(score_white)
-            #print(d)
+    #print(d)
     #picking the best option available
     max_val=-inf
     final_x=0
