@@ -26,6 +26,17 @@ class Grid:
         for i in self._grid:
             print(i)
         return None
+
+    def print_grid2(self):
+        for i in self._grid:
+            print('[',end='')
+            for j in i:
+                if len(str(j))==1:
+                    print('  '+str(j),end=',')
+                else:
+                    print(' '+str(j),end=',')
+            print(']')
+        return None
     
     def get_piece(self,x,y):
         '''Returns a piece on an (x,y) coordinate'''

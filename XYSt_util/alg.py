@@ -481,12 +481,12 @@ def check_completion_rush_all(game_obj,x,y,value,max_moves):
     min_moves=inf
     final=set()
     for i in [r,dr,d,dl,l,ul,u,ur]:
-        if len(i)<min_moves:
+        if len(i)<min_moves and i!=set():
             min_moves=len(i)
             final=i
         else:
             final=final.union(i)
-    return (len(i),final)    
+    return (min_moves,final)    
 
 def alg_rush(game_obj:game.Grid,max_moves=1):
     '''Helper algorithm that attempts to rush a win'''

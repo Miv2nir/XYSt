@@ -109,7 +109,7 @@ def main():
     
     runtime(white,black,presets,presets_win_lengths,decision_max_seconds,win_black,win_white,alpha,a,b,rush_value)
     #archive.test6()
-    #archive.test8()
+    #archive.test9()
 
 if __name__ == '__main__':
     main()
