@@ -77,7 +77,12 @@ def runtime(white,black,presets,presets_win_lengths,decision_max_seconds,win_bla
         if white_win==Space.WHITE.name:
             print(str(g.log_dict).replace('\'','"'))
             exit(0) #the game is over
-        game_over=black.analyze(g,decision_max_seconds,move=True,verbal=True)
+        try:
+            game_over=black.analyze(g,decision_max_seconds,move=True,verbal=True)
+        except RuntimeWarning:
+            #the game is over with a draw
+            game_over=True
+            print('Draw!')
     print(str(g.log_dict).replace('\'','"'))
 
 
