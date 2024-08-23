@@ -208,3 +208,12 @@ def test9():
     print(alg.check_completion_rush_all(g,5,13,Space.WHITE.value,1))
     print(alg.alg_rush(g,1))
     print(g.evaluate())
+
+def test10():
+    g=game.Grid(2,7,4,3)
+    g.put(1,1,Space.BLACK)
+    g.put(1,2,Space.BLACK)
+    g.put(1,3,Space.BLACK)
+    #g.put(1,4,Space.WHITE)
+    g.print_grid()
+    print(g.evaluate())

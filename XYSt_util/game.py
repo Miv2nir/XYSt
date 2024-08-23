@@ -23,6 +23,9 @@ class Grid:
         self.log_dict[keyletter+keynum]=str((x,y))
 
     def print_grid(self):
+        return self.print_grid1()
+
+    def print_grid1(self):
         for i in self._grid:
             print(i)
         return None
@@ -77,7 +80,11 @@ class Grid:
         #add out of bounds checks here
         #print(x,y,self._grid[y-1][x-1])
         #print(length>=self.win_white,value,Space.WHITE.value)
-        if length>=self.win_black or length>=self.win_white:
+        if value==Space.WHITE.value:
+            win_length=self.win_white
+        else:
+            win_length=self.win_black
+        if length>=win_length:
             return True
         elif x>self._x or y>self._y or x<1 or y<1:
             #out of bounds
