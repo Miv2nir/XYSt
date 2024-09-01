@@ -561,17 +561,23 @@ def alg_improved_comparison(game_obj:game.Grid):
     #print(d)
     #picking the best option available
     max_val=-inf
-    final_x=0
-    final_y=0
+    final_x=[]
+    final_y=[]
     for i in d.keys():
         if d[i]>max_val:
             max_val=d[i]
-            final_x,final_y=i
+            final_x=[i[0]]
+            final_y=[i[1]]
+            #final_x,final_y=i
+        if d[i]==max_val:
+            final_x.append(i[0])
+            final_y.append(i[1])
     #for i in d.keys():
     #    if d[i]==max_val:
             #print(i,end=' ')
     #print()
-    return (final_x,final_y)
+    i=random.randrange(0,len(final_x))
+    return (final_x[i],final_y[i])
 
 def alg_improved_sum(game_obj:game.Grid,alpha=0.8,a=8,b=10):
     '''Wrapper for alg_improved that runs it for blacks and whites and then compares both (works badly)'''
