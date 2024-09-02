@@ -5,15 +5,18 @@ class Player:
     def __init__(self,name:Names):
         self.name=name
     
-    def move(self,game_obj:game.Grid,x,y,verbal=False):
-        print(self.name.name,'sets a piece on (%s,%s)'%(x,y))
+    def move(self,game_obj:game.Grid,x,y,verbal=False,white_label=False):
+        if white_label:
+            print(Names.WHITE.name,'sets a piece on (%s,%s)'%(x,y))
+        else:
+            print(self.name.name,'sets a piece on (%s,%s)'%(x,y))
         if self.name==Names.WHITE:
             game_obj.put(x,y,Space.WHITE)
         else:
             game_obj.put(x,y,Space.BLACK)
         return game_obj.evaluate(verbal)
     
-    def analyze(self,game_obj:game.Grid,decision_max_seconds,move=True,verbal=False):
+    def analyze(self,game_obj:game.Grid,decision_max_seconds,move=True,verbal=False,white_label=False,printer=True):
         '''
         Suggests the next most beneficial move to the player.
         According to the design this function should only be called when the player is Black AKA a bot. (To be fixed)
@@ -24,9 +27,13 @@ class Player:
         guess_x,guess_y = alg.alg_improved_comparison(game_obj)
         #to rewrite as alg_linear which's alg_minimax with depth 0 and then edit the formula
         if move:
-            thought=self.move(game_obj,guess_x,guess_y,verbal)
-            game_obj.log(Names.BLACK,guess_x,guess_y)
+            thought=self.move(game_obj,guess_x,guess_y,verbal,white_label)
+            if white_label:
+                game_obj.log(Names.WHITE,guess_x,guess_y)
+            else:
+                game_obj.log(Names.BLACK,guess_x,guess_y)
         else:
             thought=False
-        game_obj.print_grid()
+        if printer:
+            game_obj.print_grid()
         return thought

@@ -22,6 +22,12 @@ class Grid:
         keyletter=color.name[0].lower()
         self.log_dict[keyletter+keynum]=str((x,y))
 
+    def reverse(self):
+        '''Multiplies all positions in the matrix by -1, which practically swaps colors of the pegs placed'''
+        for i in range(self._x):
+            for j in range(self._y):
+                self._grid[j][i]*=-1
+
     def print_grid(self):
         return self.print_grid1()
 

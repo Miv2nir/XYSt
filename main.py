@@ -52,37 +52,70 @@ def runtime(white,black,presets,presets_win_lengths,decision_max_seconds,win_bla
         g=game.Grid(x,y)
         g.win_white,g.win_black=map(int,input("Enter win condition lenghts for white & black respectively: ").split())
     g.print_grid()
-    print('Who is making the first move? (player, bot)')
-    first_move=option_picker_str({'player','bot'})
-    #gaming time
-    game_over=False
-    if first_move=='bot':
-        game_over=black.analyze(g,decision_max_seconds,move=True,verbal=True)
-    while not game_over:
-        white_x,white_y=map(int,input('Select a space to place a peg in: ').split())
-        #out of bounds check
-        if (white_x>g._x) or (white_y>g._y) or (0>white_x) or (0>white_y):
-            print(g._x,g._y)
-            print('Selection is Out of Bounds!')
-            continue
-        #check for not selecting an empty space
-        if g.get_value(white_x,white_y)!=0:
-            print('This space is occupied!')
-            continue
-        #continuing on
-        white.move(g,white_x,white_y,verbal=True)
-        g.log(Names.WHITE,white_x,white_y)
-        g.print_grid()
-        white_win=g.evaluate(verbal=True)
-        if white_win==Space.WHITE.name:
-            print(str(g.log_dict).replace('\'','"'))
-            exit(0) #the game is over
-        try:
+    print("Who's playing the game?")
+    print("1. Player vs bot")
+    print("2. Bot vs bot")
+    play_mode=option_picker_int({1,2})
+    if play_mode==2:
+        #bot vs bot
+        game_over=False
+        while not game_over:
+            #first move
+            try:
+                game_over=black.analyze(g,decision_max_seconds,move=True,verbal=True)
+            except (RuntimeWarning, ValueError) as e:
+                #the game is over with a draw
+                game_over=True
+                print('Draw!')
+            black_win=g.evaluate(verbal=True)
+            if black_win==Space.BLACK.name:
+                print(str(g.log_dict).replace('\'','"'))
+                exit(0) #the game is over
+            #the move is done, flip the game field and proceed
+            g.reverse()
+            try:
+                game_over=black.analyze(g,decision_max_seconds,move=True,verbal=True,printer=False,white_label=True)
+                g.reverse()
+                g.print_grid()
+            except (RuntimeWarning, ValueError) as e:
+                #the game is over with a draw
+                game_over=True
+                g.print_grid()
+                print('Draw!')
+        #if white wins the loop should exit gracefully
+    else:  
+        #regular player vs bot time      
+        print('Who is making the first move? (player, bot)')
+        first_move=option_picker_str({'player','bot'})
+        #gaming time
+        game_over=False
+        if first_move=='bot':
             game_over=black.analyze(g,decision_max_seconds,move=True,verbal=True)
-        except RuntimeWarning:
-            #the game is over with a draw
-            game_over=True
-            print('Draw!')
+        while not game_over:
+            white_x,white_y=map(int,input('Select a space to place a peg in: ').split())
+            #out of bounds check
+            if (white_x>g._x) or (white_y>g._y) or (0>white_x) or (0>white_y):
+                print(g._x,g._y)
+                print('Selection is Out of Bounds!')
+                continue
+            #check for not selecting an empty space
+            if g.get_value(white_x,white_y)!=0:
+                print('This space is occupied!')
+                continue
+            #continuing on
+            white.move(g,white_x,white_y,verbal=True)
+            g.log(Names.WHITE,white_x,white_y)
+            g.print_grid()
+            white_win=g.evaluate(verbal=True)
+            if white_win==Space.WHITE.name:
+                print(str(g.log_dict).replace('\'','"'))
+                exit(0) #the game is over
+            try:
+                game_over=black.analyze(g,decision_max_seconds,move=True,verbal=True)
+            except RuntimeWarning:
+                #the game is over with a draw
+                game_over=True
+                print('Draw!')
     print(str(g.log_dict).replace('\'','"'))
 
 
