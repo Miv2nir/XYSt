@@ -575,7 +575,8 @@ def alg_improved_comparison(game_obj:game.Grid):
                 final_y.append(i[1])
     else:
         for i in d.keys():
-            if (d[i] >= max_val-game_obj.k) and (d[i] <= max_val+game_obj.k):
+            if (d[i] >= max_val-max_val*game_obj.k) and (d[i] <= max_val+max_val*game_obj.k):
+                #print(max_val*game_obj.k,max_val-max_val*game_obj.k,max_val+max_val*game_obj.k)
                 final_x.append(i[0])
                 final_y.append(i[1])
             elif d[i]>max_val:
