@@ -1,5 +1,6 @@
 from XYSt_util import game,players,archive
 from XYSt_util.names import Names, Space
+import random
 def option_picker_str(options:set):
     while True: #option selector
         option=str(input("Type an option: "))
@@ -14,7 +15,7 @@ def option_picker_int(options:set):
             return option
         print('Incorrect option number specified.')
 
-def runtime(white,black,presets,presets_win_lengths,decision_max_seconds,win_black,win_white,alpha,a,b,rush_value):
+def runtime(white,black,presets,presets_win_lengths,decision_max_seconds,win_black,win_white,alpha,a,b,rush_value,k):
     '''runtime for the CLI play'''
     print('Select an option:')
     print('1. Load a field preset')
@@ -25,10 +26,18 @@ def runtime(white,black,presets,presets_win_lengths,decision_max_seconds,win_bla
     g.win_black=win_black
     g.win_white=win_white
     #insert algorithm parameters
-    g.alpha=alpha
-    g.a=a
-    g.b=b 
     g.rush_value=rush_value
+    if k==0:
+        g.alpha=alpha
+        g.a=a
+        g.b=b 
+        g.k=0
+    else:
+        k=k/100
+        g.alpha=random.uniform(alpha-k,alpha+k)
+        g.a=random.uniform(a-k,a+k)
+        g.b=random.uniform(b-k,b+k)
+        g.k=k
     
     global decision_max_time
     decision_max_time=decision_max_seconds
@@ -129,6 +138,7 @@ def main():
     a=10 #evaluation factor for the white player
     b=10 #evaluation factor for the black player
     rush_value=1 #in how many moves until one's victory the alg_rush() shall trigger
+    k=5 #percentage of the constants (alpha,a,b) deviating from the set values as well as position selection
     presets={
         'default':[[0 for col in range(15)] for row in range(15)],
         'small':[[0 for col in range(5)] for row in range(5)],
@@ -145,7 +155,7 @@ def main():
     white=players.Player(Names.WHITE)
     black=players.Player(Names.BLACK)
     
-    runtime(white,black,presets,presets_win_lengths,decision_max_seconds,win_black,win_white,alpha,a,b,rush_value)
+    runtime(white,black,presets,presets_win_lengths,decision_max_seconds,win_black,win_white,alpha,a,b,rush_value,k)
     #archive.test6()
     #archive.test10()
 
